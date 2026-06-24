@@ -35,6 +35,7 @@ function getYouTubeId(url: string) {
 export default function VideosPage() {
   const [lang, setLang] = useState<Lang>('ar')
   const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
   const t = translations.videos[lang]
   const [activeVideo, setActiveVideo] = useState<string | null>(null)
   const [videoError, setVideoError] = useState(false)
@@ -42,7 +43,7 @@ export default function VideosPage() {
   const projectTypes = translations.projectTypes[lang]
 
   useEffect(() => {
-    projectsApi.list().then(r => setProjects(r.projects)).catch(() => {})
+    projectsApi.list().then(r => setProjects(r.projects)).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
   const items = useMemo(() => {
@@ -152,7 +153,11 @@ export default function VideosPage() {
             ))}
           </div>
 
-          {items.length === 0 && (
+          {loading ? (
+            <div className="flex justify-center items-center mt-24">
+              <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+            </div>
+          ) : items.length === 0 && (
             <p className="text-center text-ivory/20 text-sm mt-16">
               {lang === 'en' ? 'No projects yet.' : 'لا توجد مشاريع بعد.'}
             </p>

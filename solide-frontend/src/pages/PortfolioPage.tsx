@@ -18,6 +18,7 @@ function parseList(v: string | null | undefined): string[] {
 export default function PortfolioPage() {
   const [lang, setLang] = useState<Lang>('ar')
   const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
   const t = translations.portfolio[lang]
   const [filter, setFilter] = useState<'all' | 'images' | 'models3d'>('all')
   const [typeFilter, setTypeFilter] = useState<string>('all')
@@ -25,7 +26,7 @@ export default function PortfolioPage() {
   const projectTypes = translations.projectTypes[lang]
 
   useEffect(() => {
-    projectsApi.list().then(r => setProjects(r.projects)).catch(() => {})
+    projectsApi.list().then(r => setProjects(r.projects)).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
   const filters = [
@@ -146,7 +147,11 @@ export default function PortfolioPage() {
             </motion.div>
           </AnimatePresence>
 
-          {items.length === 0 && (
+          {loading ? (
+            <div className="flex justify-center items-center mt-24">
+              <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+            </div>
+          ) : items.length === 0 && (
             <p className="text-center text-ivory/20 text-sm mt-16">
               {lang === 'en' ? 'No projects yet.' : 'لا توجد مشاريع بعد.'}
             </p>
