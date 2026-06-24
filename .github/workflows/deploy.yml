@@ -35,7 +35,7 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://solide-api.onrender.com' }}
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://solide-api-production.up.railway.app' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: solide-frontend/dist
