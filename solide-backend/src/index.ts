@@ -10,6 +10,7 @@ import ticketsRouter from "./routes/tickets";
 import mediaRouter from "./routes/media";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { execSync } from "child_process";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 4000;
@@ -24,10 +25,9 @@ app.get("/debug", async (_req, res) => {
     const { PrismaClient } = await import("@prisma/client");
     const p = new PrismaClient();
     const admins = await p.admin.findMany();
-    const tables = await p.$executeRawUnsafe("SELECT name FROM sqlite_master WHERE type='table'");
-    res.json({ admins, tables });
+    res.json({ admins });
   } catch (e: any) {
-    res.json({ error: e.message, stack: e.stack?.split("\n") });
+    res.json({ error: e.message, stack: e.stack?.split("\n").slice(0, 3) });
   }
 });
 
@@ -45,6 +45,7 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 
 async function seed() {
   try {
+    execSync("npx prisma db push", { stdio: "pipe" });
     const prisma = new PrismaClient();
     const hash = await bcrypt.hash("Solide@2026", 12);
     await prisma.admin.upsert({
@@ -53,7 +54,9 @@ async function seed() {
       create: { email: "admin@solide.com", passwordHash: hash, name: "Solide Admin" },
     });
     await prisma.$disconnect();
-  } catch (e) {
+    console.log("Database seeded successfully");
+  } catch (e: any) {
+    console.error("Seed failed:", e.message);
   }
 }
 
