@@ -1,8 +1,0 @@
-[build]
-  command = "npm install && npm run build && npx prisma generate"
-
-[deploy]
-  command = "mkdir -p ./uploads && npx prisma db push && node dist/index.js"
-  healthcheckPath = "/health"
-  restartPolicyType = "always"
-  numReplicas = 1
