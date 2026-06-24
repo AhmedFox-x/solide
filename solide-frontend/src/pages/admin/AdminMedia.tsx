@@ -86,7 +86,7 @@ export default function AdminMedia() {
                 {/* preview */}
                 <div className="aspect-square bg-white/[0.02]">
                   {f.mediaType === 'video' ? (
-                    <video src={assetUrl(f.url)} className="w-full h-full object-cover" />
+                    <video src={assetUrl(f.url)} controls className="w-full h-full object-cover" />
                   ) : f.mediaType === 'image' ? (
                     <img src={assetUrl(f.url)} alt={f.altText || ''} className="w-full h-full object-cover" loading="lazy" />
                   ) : (

@@ -13,6 +13,11 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { execSync } from "child_process";
 
+if (!process.env.JWT_SECRET) {
+  console.error("JWT_SECRET environment variable is required");
+  process.exit(1);
+}
+
 const app = express();
 const PORT = Number(process.env.PORT) || 4000;
 
@@ -82,7 +87,7 @@ async function seed() {
         if (fs.existsSync(dir)) {
           execSync(`cp -r ${dir}/* "${volUploadDir}/" 2>/dev/null || true`, { stdio: "pipe" });
         }
-      } catch { /* skip */ }
+      } catch (e) { /* skip */ }
     }
 
     const prisma = new PrismaClient();
@@ -111,7 +116,6 @@ async function seed() {
       return;
     }
 
-    const hash = await bcrypt.hash("Solide@2026", 12);
     for (const a of seedData.admins) {
       await prisma.admin.upsert({
         where: { email: a.email },

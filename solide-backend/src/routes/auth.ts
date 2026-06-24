@@ -2,6 +2,7 @@ import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
 import { signToken } from "../utils/jwt";
+import { requireAuth, AuthRequest } from "../middleware/auth";
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -20,21 +21,19 @@ router.post("/login", async (req, res) => {
     const token = signToken(admin.id, admin.email);
     res.json({ token, admin: { id: admin.id, email: admin.email, name: admin.name } });
   } catch (err) {
+    console.error("Login failed:", err);
     res.status(500).json({ error: "Login failed" });
   }
 });
 
-router.get("/me", async (req, res) => {
-  const header = req.headers.authorization;
-  if (!header?.startsWith("Bearer ")) return res.status(401).json({ error: "No token" });
+router.get("/me", requireAuth, async (req: AuthRequest, res) => {
   try {
-    const jwt = await import("jsonwebtoken");
-    const decoded = jwt.default.verify(header.split(" ")[1], process.env.JWT_SECRET || "fallback-secret") as { id: string };
-    const admin = await prisma.admin.findUnique({ where: { id: decoded.id } });
+    const admin = await prisma.admin.findUnique({ where: { id: req.admin!.id } });
     if (!admin) return res.status(404).json({ error: "Admin not found" });
     res.json({ admin: { id: admin.id, email: admin.email, name: admin.name } });
-  } catch {
-    res.status(401).json({ error: "Invalid token" });
+  } catch (err) {
+    console.error("Failed to fetch admin:", err);
+    res.status(500).json({ error: "Failed to fetch admin" });
   }
 });
 

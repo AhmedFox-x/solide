@@ -31,7 +31,8 @@ router.get("/", requireAuth, async (_req, res) => {
   try {
     const files = await prisma.media.findMany({ orderBy: { createdAt: "desc" } });
     res.json({ files });
-  } catch {
+  } catch (err) {
+    console.error("Failed to fetch media:", err);
     res.status(500).json({ error: "Failed to fetch media" });
   }
 });
@@ -73,7 +74,8 @@ router.delete("/:id", requireAuth, async (req, res) => {
   try {
     await prisma.media.delete({ where: { id: req.params.id } });
     res.json({ success: true });
-  } catch {
+  } catch (err) {
+    console.error("Failed to delete media:", err);
     res.status(500).json({ error: "Failed to delete media" });
   }
 });

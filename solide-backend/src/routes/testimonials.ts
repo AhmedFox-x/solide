@@ -9,7 +9,8 @@ router.get("/", async (_req, res) => {
   try {
     const testimonials = await prisma.testimonial.findMany({ orderBy: { createdAt: "desc" } });
     res.json({ testimonials });
-  } catch {
+  } catch (err) {
+    console.error("Failed to fetch testimonials:", err);
     res.status(500).json({ error: "Failed to fetch testimonials" });
   }
 });
@@ -18,7 +19,8 @@ router.post("/", requireAuth, async (req, res) => {
   try {
     const testimonial = await prisma.testimonial.create({ data: req.body });
     res.status(201).json({ testimonial });
-  } catch {
+  } catch (err) {
+    console.error("Failed to create testimonial:", err);
     res.status(500).json({ error: "Failed to create testimonial" });
   }
 });
@@ -30,7 +32,8 @@ router.patch("/:id", requireAuth, async (req, res) => {
       data: req.body,
     });
     res.json({ testimonial });
-  } catch {
+  } catch (err) {
+    console.error("Failed to update testimonial:", err);
     res.status(500).json({ error: "Failed to update testimonial" });
   }
 });
@@ -39,7 +42,8 @@ router.delete("/:id", requireAuth, async (req, res) => {
   try {
     await prisma.testimonial.delete({ where: { id: req.params.id } });
     res.json({ success: true });
-  } catch {
+  } catch (err) {
+    console.error("Failed to delete testimonial:", err);
     res.status(500).json({ error: "Failed to delete testimonial" });
   }
 });

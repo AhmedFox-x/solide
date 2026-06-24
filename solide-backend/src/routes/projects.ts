@@ -21,7 +21,8 @@ router.get("/all", requireAuth, async (_req, res) => {
   try {
     const projects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } });
     res.json({ projects });
-  } catch {
+  } catch (err) {
+    console.error("Failed to fetch projects:", err);
     res.status(500).json({ error: "Failed to fetch projects" });
   }
 });
@@ -31,7 +32,8 @@ router.get("/:id", async (req, res) => {
     const project = await prisma.project.findUnique({ where: { id: req.params.id } });
     if (!project) return res.status(404).json({ error: "Project not found" });
     res.json({ project });
-  } catch {
+  } catch (err) {
+    console.error("Failed to fetch project:", err);
     res.status(500).json({ error: "Failed to fetch project" });
   }
 });
@@ -71,7 +73,8 @@ router.delete("/:id", requireAuth, async (req, res) => {
   try {
     await prisma.project.delete({ where: { id: req.params.id } });
     res.json({ success: true });
-  } catch {
+  } catch (err) {
+    console.error("Failed to delete project:", err);
     res.status(500).json({ error: "Failed to delete project" });
   }
 });

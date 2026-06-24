@@ -5,7 +5,7 @@ import { requireAuth } from "../middleware/auth";
 const router = Router();
 const prisma = new PrismaClient();
 
-const EG_PHONE = /^01[0-2,5]{1}[0-9]{8}$/;
+const EG_PHONE = /^01[0-25][0-9]{8}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 router.post("/", async (req, res) => {
@@ -28,7 +28,8 @@ router.post("/", async (req, res) => {
       data: { name, email, phone, subject, message, type: type || "inquiry", preferredContact: contact },
     });
     res.status(201).json({ ticket });
-  } catch {
+  } catch (err) {
+    console.error("Failed to create ticket:", err);
     res.status(500).json({ error: "Failed to create ticket" });
   }
 });
@@ -37,7 +38,8 @@ router.get("/", requireAuth, async (_req, res) => {
   try {
     const tickets = await prisma.ticket.findMany({ orderBy: { createdAt: "desc" } });
     res.json({ tickets });
-  } catch {
+  } catch (err) {
+    console.error("Failed to fetch tickets:", err);
     res.status(500).json({ error: "Failed to fetch tickets" });
   }
 });
@@ -47,7 +49,8 @@ router.get("/:id", requireAuth, async (req, res) => {
     const ticket = await prisma.ticket.findUnique({ where: { id: req.params.id } });
     if (!ticket) return res.status(404).json({ error: "Ticket not found" });
     res.json({ ticket });
-  } catch {
+  } catch (err) {
+    console.error("Failed to fetch ticket:", err);
     res.status(500).json({ error: "Failed to fetch ticket" });
   }
 });
@@ -61,7 +64,8 @@ router.patch("/:id", requireAuth, async (req, res) => {
       data,
     });
     res.json({ ticket });
-  } catch {
+  } catch (err) {
+    console.error("Failed to update ticket:", err);
     res.status(500).json({ error: "Failed to update ticket" });
   }
 });
@@ -70,7 +74,8 @@ router.delete("/:id", requireAuth, async (req, res) => {
   try {
     await prisma.ticket.delete({ where: { id: req.params.id } });
     res.json({ success: true });
-  } catch {
+  } catch (err) {
+    console.error("Failed to delete ticket:", err);
     res.status(500).json({ error: "Failed to delete ticket" });
   }
 });
