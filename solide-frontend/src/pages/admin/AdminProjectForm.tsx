@@ -28,7 +28,7 @@ export default function AdminProjectForm() {
   const isEdit = !!id
   const [form, setForm] = useState<FormData>({
     title: '', description: '', category: 'تشكيل معادن',
-    type: 'تشكيل معادن', images: '[]', videos: '[]', models3d: '[]', beforeImage: '', status: 'draft',
+    type: translations.projectTypes.ar[0], images: '[]', videos: '[]', models3d: '[]', beforeImage: '', status: 'draft',
   })
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)

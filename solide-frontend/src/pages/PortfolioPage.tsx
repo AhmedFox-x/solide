@@ -35,24 +35,26 @@ export default function PortfolioPage() {
     { key: 'models3d' as const, label: t.filterModels },
   ]
 
-  // always show projects, with or without media
-  const items = useMemo(() => {
-    const result: { id: string; title: string; category: string; type: string; description: string; coverImage: string | null; media: { type: 'image' | 'model'; url: string }[] }[] = []
+  // compute project cards (filter all) and media items (filter images/models3d)
+  const cards = useMemo(() => {
+    return projects.filter(p => typeFilter === 'all' || p.type === typeFilter)
+      .filter(p => filter === 'all' ? (parseList(p.images).length > 0 || parseList(p.models3d).length > 0 || !!p.beforeImage) : true)
+      .map(p => ({
+        id: p.id, title: p.title, category: p.category, type: p.type,
+        description: p.description,
+        coverImage: p.beforeImage || (parseList(p.images)[0] || null),
+      }))
+  }, [projects, filter, typeFilter])
+
+  const mediaItems = useMemo(() => {
+    if (filter === 'all') return []
+    const result: { key: string; url: string; mediaType: string; projectTitle: string; projectId: string }[] = []
     projects.forEach(p => {
       if (typeFilter !== 'all' && p.type !== typeFilter) return
-      const images = parseList(p.images).map(u => ({ type: 'image' as const, url: u }))
-      const models = parseList(p.models3d).map(u => ({ type: 'model' as const, url: u }))
-      const hasImagesOrModels = images.length > 0 || models.length > 0
-      let media: { type: 'image' | 'model'; url: string }[] = []
-      if (filter === 'all') media = [...images, ...models]
-      else if (filter === 'images') media = images
-      else if (filter === 'models3d') media = models
-      const coverImage = p.beforeImage || (images.length > 0 ? images[0].url : null)
-      const show = filter === 'all'
-        ? hasImagesOrModels || (!!p.beforeImage)
-        : media.length > 0
-      if (show) {
-        result.push({ id: p.id, title: p.title, category: p.category, type: p.type, description: p.description, coverImage, media })
+      if (filter === 'images') {
+        parseList(p.images).forEach(u => result.push({ key: `${p.id}-img-${u}`, url: u, mediaType: 'image', projectTitle: p.title, projectId: p.id }))
+      } else if (filter === 'models3d') {
+        parseList(p.models3d).forEach(u => result.push({ key: `${p.id}-mdl-${u}`, url: u, mediaType: 'model', projectTitle: p.title, projectId: p.id }))
       }
     })
     return result
@@ -105,57 +107,94 @@ export default function PortfolioPage() {
 
           {/* grid */}
           <AnimatePresence mode="wait">
-            <motion.div key={filter} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
-            >
-              {items.map((item) => (
-                <motion.div key={item.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4 }} className="break-inside-avoid"
-                >
-                  <div className="group relative overflow-hidden border border-ivory/5 hover:border-gold/15 transition-all bg-ivory/[0.015]">
-                    {/* thumbnail from coverImage, first media, or placeholder */}
-                    {item.coverImage ? (
-                      <button onClick={() => setLightbox(item.media[0]?.url || item.coverImage!)} className="block w-full">
-                        <img src={assetUrl(item.coverImage)}
-                          alt={item.title} className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                          style={{ minHeight: 200, maxHeight: 450 }} loading="lazy" />
-                      </button>
-                    ) : (
-                      <div className="w-full flex items-center justify-center bg-ivory/[0.02] py-16">
-                        <div className="text-center">
-                          <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-ivory/10 flex items-center justify-center text-ivory/20 text-xl font-display">
-                            {item.title.charAt(0).toUpperCase()}
+            {filter === 'all' ? (
+              <motion.div key="all" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
+              >
+                {cards.map((item) => (
+                  <motion.div key={item.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4 }} className="break-inside-avoid"
+                  >
+                    <div className="group relative overflow-hidden border border-ivory/5 hover:border-gold/15 transition-all bg-ivory/[0.015]">
+                      {item.coverImage ? (
+                        <button onClick={() => setLightbox(item.coverImage)} className="block w-full">
+                          <img src={assetUrl(item.coverImage)}
+                            alt={item.title} className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                            style={{ minHeight: 200, maxHeight: 450 }} loading="lazy" />
+                        </button>
+                      ) : (
+                        <div className="w-full flex items-center justify-center bg-ivory/[0.02] py-16">
+                          <div className="text-center">
+                            <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-ivory/10 flex items-center justify-center text-ivory/20 text-xl font-display">
+                              {item.title.charAt(0).toUpperCase()}
+                            </div>
+                            <p className="text-xs text-ivory/20">{item.category}</p>
                           </div>
-                          <p className="text-xs text-ivory/20">{item.category}</p>
                         </div>
-                      </div>
-                    )}
-                    <div className="p-5">
-                      <div className="flex flex-wrap gap-1.5 mb-2">
-                        <span className="text-[10px] px-2 py-0.5 bg-gold/10 text-gold/70 tracking-wider">{item.type}</span>
-                        <span className="text-[10px] px-2 py-0.5 bg-ivory/5 text-ivory/40">{item.category}</span>
-                      </div>
-                      <h3 className="text-base font-serif text-ivory">{item.title}</h3>
-                      {item.description && (
-                        <p className="text-sm text-ivory/50 mt-2 leading-relaxed line-clamp-3">{item.description}</p>
                       )}
+                      <div className="p-5">
+                        <div className="flex flex-wrap gap-1.5 mb-2">
+                          <span className="text-[10px] px-2 py-0.5 bg-gold/10 text-gold/70 tracking-wider">{item.type}</span>
+                          <span className="text-[10px] px-2 py-0.5 bg-ivory/5 text-ivory/40">{item.category}</span>
+                        </div>
+                        <h3 className="text-base font-serif text-ivory">{item.title}</h3>
+                        {item.description && (
+                          <p className="text-sm text-ivory/50 mt-2 leading-relaxed line-clamp-3">{item.description}</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div key={filter} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
+              >
+                {mediaItems.map((item) => (
+                  <motion.div key={item.key} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4 }} className="break-inside-avoid"
+                  >
+                    <div className="group relative overflow-hidden border border-ivory/5 hover:border-gold/15 transition-all bg-ivory/[0.015]">
+                      {item.mediaType === 'image' ? (
+                        <button onClick={() => setLightbox(item.url)} className="block w-full">
+                          <img src={assetUrl(item.url)}
+                            alt={item.projectTitle} className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                            style={{ minHeight: 200, maxHeight: 450 }} loading="lazy" />
+                        </button>
+                      ) : (
+                        <div className="w-full flex items-center justify-center bg-ivory/[0.02] py-16">
+                          <div className="text-center">
+                            <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-ivory/10 flex items-center justify-center text-ivory/20">
+                              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1}>
+                                <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
+                              </svg>
+                            </div>
+                            <p className="text-xs text-ivory/40 font-serif">{item.projectTitle}</p>
+                            <p className="text-[10px] text-ivory/20 mt-1">3D Model</p>
+                          </div>
+                        </div>
+                      )}
+                      <div className="p-4">
+                        <p className="text-sm font-serif text-ivory/70">{item.projectTitle}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
           </AnimatePresence>
 
           {loading ? (
             <div className="flex justify-center items-center mt-24">
               <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
             </div>
-          ) : items.length === 0 && (
+          ) : filter === 'all' && cards.length === 0 || filter !== 'all' && mediaItems.length === 0 ? (
             <p className="text-center text-ivory/20 text-sm mt-16">
               {lang === 'en' ? 'No projects yet.' : 'لا توجد مشاريع بعد.'}
             </p>
-          )}
+          ) : null}
         </div>
       </main>
 

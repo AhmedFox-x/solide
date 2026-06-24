@@ -38,21 +38,31 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", requireAuth, async (req, res) => {
   try {
-    const project = await prisma.project.create({ data: req.body });
+    const data = { ...req.body };
+    for (const key of ["beforeImage", "afterImage"]) {
+      if (data[key] === "") data[key] = undefined;
+    }
+    const project = await prisma.project.create({ data });
     res.status(201).json({ project });
-  } catch {
+  } catch (err) {
+    console.error("Failed to create project:", err);
     res.status(500).json({ error: "Failed to create project" });
   }
 });
 
 router.patch("/:id", requireAuth, async (req, res) => {
   try {
+    const data = { ...req.body };
+    for (const key of ["beforeImage", "afterImage"]) {
+      if (data[key] === "") data[key] = undefined;
+    }
     const project = await prisma.project.update({
       where: { id: req.params.id },
-      data: req.body,
+      data,
     });
     res.json({ project });
-  } catch {
+  } catch (err) {
+    console.error("Failed to update project:", err);
     res.status(500).json({ error: "Failed to update project" });
   }
 });
