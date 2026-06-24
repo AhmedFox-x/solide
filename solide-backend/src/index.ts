@@ -19,6 +19,17 @@ app.use(express.json({ limit: "10mb" }));
 app.use("/uploads", express.static(path.resolve(process.env.UPLOAD_DIR || "./uploads")));
 
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
+app.get("/debug", async (_req, res) => {
+  try {
+    const { PrismaClient } = await import("@prisma/client");
+    const p = new PrismaClient();
+    const admins = await p.admin.findMany();
+    const tables = await p.$executeRawUnsafe("SELECT name FROM sqlite_master WHERE type='table'");
+    res.json({ admins, tables });
+  } catch (e: any) {
+    res.json({ error: e.message, stack: e.stack?.split("\n") });
+  }
+});
 
 app.use("/api/auth", authRouter);
 app.use("/api/projects", projectsRouter);
