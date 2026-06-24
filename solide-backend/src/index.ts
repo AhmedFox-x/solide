@@ -101,14 +101,19 @@ async function seed() {
     }
 
     let seedData: SeedData;
-    try {
-      seedData = require("./seed-data.json");
-    } catch {
-      try { seedData = require("../seed-data.json"); } catch {
-        console.log("No seed-data.json found, skipping");
-        await prisma.$disconnect();
-        return;
-      }
+    const seedPaths = ["./seed-data.json", "../seed-data.json", path.join(__dirname, "../seed-data.json")];
+    let found = false;
+    for (const p of seedPaths) {
+      try {
+        seedData = require(p);
+        found = true;
+        break;
+      } catch { /* try next */ }
+    }
+    if (!found) {
+      console.log("No seed-data.json found, skipping full seed");
+      await prisma.$disconnect();
+      return;
     }
 
     const hash = await bcrypt.hash("Solide@2026", 12);
