@@ -100,17 +100,12 @@ async function seed() {
       return;
     }
 
-    let seedData: SeedData;
+    let seedData: SeedData | null = null;
     const seedPaths = ["./seed-data.json", "../seed-data.json", path.join(__dirname, "../seed-data.json")];
-    let found = false;
     for (const p of seedPaths) {
-      try {
-        seedData = require(p);
-        found = true;
-        break;
-      } catch { /* try next */ }
+      try { seedData = require(p); break; } catch { /* try next */ }
     }
-    if (!found) {
+    if (!seedData) {
       console.log("No seed-data.json found, skipping full seed");
       await prisma.$disconnect();
       return;
