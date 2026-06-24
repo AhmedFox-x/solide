@@ -8,6 +8,8 @@ import projectsRouter from "./routes/projects";
 import testimonialsRouter from "./routes/testimonials";
 import ticketsRouter from "./routes/tickets";
 import mediaRouter from "./routes/media";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 4000;
@@ -30,6 +32,21 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ error: err.message || "Internal server error" });
 });
 
-app.listen(PORT, () => {
+async function seed() {
+  try {
+    const prisma = new PrismaClient();
+    const hash = await bcrypt.hash("Solide@2026", 12);
+    await prisma.admin.upsert({
+      where: { email: "admin@solide.com" },
+      update: {},
+      create: { email: "admin@solide.com", passwordHash: hash, name: "Solide Admin" },
+    });
+    await prisma.$disconnect();
+  } catch (e) {
+  }
+}
+
+app.listen(PORT, async () => {
+  await seed();
   console.log(`\n  Solide API → http://localhost:${PORT}\n`);
 });
