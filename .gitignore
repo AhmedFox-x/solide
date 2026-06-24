@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+*.db
+*.db-journal
+uploads/
+.playwright-mcp/
+.DS_Store
+Thumbs.db
+
+# temp & screenshots (root level only)
+/*.png
+/*.txt
+/*.html
+/*.mp4

@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  category    String
+  type        String   @default("photo")
+  images      String   @default("[]")
+  videos      String   @default("[]")
+  models3d    String   @default("[]")
+  beforeImage String?
+  afterImage  String?
+  status      String   @default("published")
+  featured    Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("projects")
+}
+
+model Testimonial {
+  id        String   @id @default(uuid())
+  name      String
+  title     String
+  content   String
+  rating    Int      @default(5)
+  imageUrl  String?
+  company   String?
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("testimonials")
+}
+
+model Ticket {
+  id               String   @id @default(uuid())
+  name             String
+  email            String
+  phone            String?
+  subject          String
+  message          String
+  type             String   @default("inquiry")
+  preferredContact String   @default("whatsapp")
+  status           String   @default("open")
+  priority         String   @default("normal")
+  response         String?
+  respondedAt      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("tickets")
+}
+
+model Media {
+  id        String   @id @default(uuid())
+  filename  String
+  url       String
+  mimeType  String
+  sizeBytes Int
+  mediaType String   @default("image")
+  altText   String?
+  createdAt DateTime @default(now())
+
+  @@map("media")
+}

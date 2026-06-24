@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: solide-api
+    runtime: node
+    repo: https://github.com/AhmedFox-x/solide
+    plan: free
+    rootDir: solide-backend
+    buildCommand: npm install && npm run build && npx prisma generate
+    startCommand: mkdir -p ./uploads && npx prisma db push && node dist/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        value: file:./dev.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://ahmedfox-x.github.io
+      - key: UPLOAD_DIR
+        value: ./uploads
+      - key: PORT
+        value: 10000
