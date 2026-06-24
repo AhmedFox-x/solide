@@ -36,6 +36,7 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 
 async function seed() {
   try {
+    execSync("mkdir -p /app/data/uploads", { stdio: "pipe" });
     execSync("npx prisma db push", { stdio: "pipe" });
     const prisma = new PrismaClient();
     const hash = await bcrypt.hash("Solide@2026", 12);
