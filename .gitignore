@@ -8,6 +8,9 @@ uploads/
 .DS_Store
 Thumbs.db
 
+# agent files
+AGENTS*.md
+
 # temp & screenshots (root level only)
 /*.png
 /*.txt
