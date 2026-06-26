@@ -38,7 +38,7 @@ export const translations = {
       ],
     },
     ar: {
-      heading: "قدراتنا",
+      heading: "خامات",
       items: [
         { title: "السلالم والدرابزين", desc: "سلالم كريتال داخلية وخارجية مع درابزين بتفاصيل دقيقة وطلاء إلكتروستاتيك يضمن جمالاً وعمراً أطول." },
         { title: "الشبابيك والأبواب", desc: "شبابيك كريتال خارجية وشبابيك حماية وبوابات بتصاميم عصرية وكلاسيكية تليق بمشروعك." },
@@ -81,7 +81,7 @@ export const translations = {
   },
   testimonials: {
     en: { heading: "What Our Clients Say" },
-    ar: { heading: "ماذا يقول عملاؤنا" },
+    ar: { heading: "اراء العملاء" },
   },
   contact: {
     en: {
@@ -115,7 +115,7 @@ export const translations = {
         { label: "فيسبوك", value: "Solide Egypt", icon: "Globe", href: "https://www.facebook.com/solidecompany/" },
         { label: "الموقع", value: "القاهرة، مصر", icon: "MapPin", href: "#" },
       ],
-      cta: "اطلب عرض سعر مجاني ←",
+      cta: "اطلب الان",
       formTitle: "أو أرسل لنا رسالة",
       preferredContact: "وسيلة التواصل المفضلة",
       contactWhatsapp: "واتساب",

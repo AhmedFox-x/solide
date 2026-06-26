@@ -116,15 +116,13 @@ export default function ContactSection({ lang }: Props) {
           })}
         </motion.div>
 
-        <motion.a
-          href={t.channels[0].href}
-          target="_blank"
-          rel="noopener noreferrer"
+        <motion.button
+          onClick={() => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" })}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="group inline-flex items-center gap-3 px-12 py-4 bg-gradient-to-br from-gold/80 to-gold text-obsidian font-sans text-sm tracking-[0.25em] uppercase transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_60px_rgba(200,150,60,0.28)]"
+          className="group inline-flex items-center gap-3 px-12 py-4 bg-gradient-to-br from-gold/80 to-gold text-obsidian font-sans text-sm tracking-[0.25em] uppercase transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_60px_rgba(200,150,60,0.28)] cursor-pointer"
           style={{ clipPath: "polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)" }}
         >
           <span>{t.cta}</span>
@@ -133,10 +131,10 @@ export default function ContactSection({ lang }: Props) {
           ) : (
             <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           )}
-        </motion.a>
+        </motion.button>
 
         {/* ticket form */}
-        <div className="mt-20 pt-16 border-t border-ivory/5">
+        <div id="contact-form" className="mt-20 pt-16 border-t border-ivory/5">
           <p className="text-ivory/30 text-sm tracking-[0.2em] uppercase mb-8">{t.formTitle}</p>
 
           <motion.form
