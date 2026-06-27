@@ -7,6 +7,7 @@ import { projectsApi } from '../lib/api'
 import type { Project } from '../lib/api'
 import GeometricBg from '../components/GeometricBg'
 import AppNavbar from '../components/AppNavbar'
+import ImageMagnifier from '../components/ImageMagnifier'
 import { ArrowLeft, ArrowRight, X, ChevronLeft, ChevronRight, Grid3X3 } from 'lucide-react'
 import logo from '../assets/logo-bg.png'
 
@@ -131,18 +132,15 @@ export default function ProjectDetailPage() {
               style={{ minHeight: 400, maxHeight: 600 }}
             >
               {allImages[selectedIdx] ? (
-                <button onClick={() => setLightboxOpen(true)} className="block w-full h-full cursor-zoom-in">
-                  <img src={assetUrl(allImages[selectedIdx])}
-                    alt={project.title} className="w-full h-full object-contain bg-ivory/[0.02] transition-transform duration-700 group-hover:scale-[1.01]"
-                    style={{ maxHeight: 600 }} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-obsidian/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <div className="bg-obsidian/80 backdrop-blur-sm px-3 py-1.5 text-[10px] tracking-wider text-gold/80 uppercase border border-gold/20">
-                      <X className="w-3 h-3 inline mr-1" />
-                      {lang === 'ar' ? 'اضغط للتكبير' : 'Click to enlarge'}
-                    </div>
-                  </div>
-                </button>
+                <ImageMagnifier
+                  src={assetUrl(allImages[selectedIdx])}
+                  alt={project.title}
+                  zoom={2.5}
+                  lensSize={140}
+                  onClick={() => setLightboxOpen(true)}
+                  className="w-full h-full bg-ivory/[0.02] cursor-zoom-in"
+                  lang={lang}
+                />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-ivory/[0.02]" style={{ minHeight: 400 }}>
                   <div className="text-center">
