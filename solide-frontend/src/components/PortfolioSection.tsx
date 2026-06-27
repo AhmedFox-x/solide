@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { translations } from "../lib/translations";
 import { assetUrl } from "../lib/asset";
@@ -111,7 +112,7 @@ export default function PortfolioSection({ lang, projects }: Props) {
                 className="break-inside-avoid"
               >
                 {item.url ? (
-                  <button onClick={() => setLightbox(item.url)} className="group relative w-full overflow-hidden block">
+                  <Link to={`/project/${item.project.id}`} className="group relative w-full overflow-hidden block">
                     <img
                       src={assetUrl(item.url)}
                       alt={item.projectTitle}
@@ -119,13 +120,18 @@ export default function PortfolioSection({ lang, projects }: Props) {
                       style={{ minHeight: 200, maxHeight: 500 }}
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-obsidian/0 group-hover:bg-obsidian/40 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-obsidian/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                       <span className="text-xs text-ivory/70 tracking-[0.1em] uppercase">
                         {item.type === "models3d" ? "3D Model" : "Photo"} — {item.projectTitle}
                       </span>
                     </div>
-                  </button>
+                    <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <span className="bg-gold text-obsidian text-[9px] tracking-wider uppercase px-2 py-1 font-semibold">
+                        {lang === 'ar' ? 'عرض التفاصيل' : 'View Details'}
+                      </span>
+                    </div>
+                  </Link>
                 ) : (
                   <div className="w-full bg-ivory/[0.02] border border-ivory/5 flex items-center justify-center py-16 px-4">
                     <div className="text-center">
