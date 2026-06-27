@@ -244,8 +244,11 @@ export default function PortfolioPage() {
       </AnimatePresence>
 
       <footer className="py-10 px-4 border-t border-ivory/5">
-        <div className="max-w-6xl mx-auto text-center text-ivory/20 text-xs">
-          © {new Date().getFullYear()} Solide. {lang === 'en' ? 'All rights reserved.' : 'جميع الحقوق محفوظة.'}
+        <div className="max-w-6xl mx-auto text-center">
+          <span className="font-display text-xs text-ivory/10 tracking-widest block mb-2">SOLIDE</span>
+          <p className="text-ivory/20 text-[10px]">
+            © {new Date().getFullYear()} Solide. {lang === 'en' ? 'All rights reserved.' : 'جميع الحقوق محفوظة.'}
+          </p>
         </div>
       </footer>
     </div>

@@ -171,14 +171,55 @@ export default function HomePage() {
         </div>
       </main>
 
-      <footer className="relative z-[1] py-10 px-4 border-t border-ivory/5">
-        <div className="max-w-6xl mx-auto text-center text-ivory/20 text-xs">
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="w-8 h-[1px] bg-ivory/10" />
-            <span className="font-display text-lg text-ivory/15 tracking-widest">SOLIDE</span>
-            <div className="w-8 h-[1px] bg-ivory/10" />
+      <footer className="relative z-[1] pt-20 pb-10 px-4 border-t border-ivory/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid sm:grid-cols-3 gap-10 mb-12 text-center sm:text-left">
+            <div>
+              <span className="font-display text-xl tracking-[0.25em] text-ivory">SOLIDE</span>
+              <p className="text-xs text-ivory/30 mt-3 leading-relaxed max-w-xs mx-auto sm:mx-0">
+                {lang === 'en'
+                  ? 'Premium metal craftsmanship — wrought iron art defined by design.'
+                  : 'صناعة معدنية فاخرة — فن الحديد الكريتال، محدّد بالتصميم.'}
+              </p>
+            </div>
+            <div>
+              <h4 className="text-[10px] tracking-[0.2em] uppercase text-gold/50 mb-4">
+                {lang === 'en' ? 'Quick Links' : 'روابط سريعة'}
+              </h4>
+              <div className="space-y-2">
+                {['/portfolio', '/videos', '/'].map((to, i) => (
+                  <Link key={to} to={to}
+                    className="block text-xs text-ivory/30 hover:text-gold transition-colors"
+                  >
+                    {lang === 'en'
+                      ? ['Portfolio', 'Videos', 'Home'][i]
+                      : ['أعمالنا', 'فيديو', 'الرئيسية'][i]}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4 className="text-[10px] tracking-[0.2em] uppercase text-gold/50 mb-4">
+                {lang === 'en' ? 'Contact' : 'تواصل'}
+              </h4>
+              <div className="space-y-2">
+                <a href="https://wa.me/201060512080" target="_blank" rel="noopener noreferrer"
+                  className="block text-xs text-ivory/30 hover:text-gold transition-colors"
+                >WhatsApp — 01060512080</a>
+                <a href="https://www.facebook.com/solidecompany/" target="_blank" rel="noopener noreferrer"
+                  className="block text-xs text-ivory/30 hover:text-gold transition-colors"
+                >Facebook — Solide Egypt</a>
+              </div>
+            </div>
           </div>
-          © {new Date().getFullYear()} Solide. {lang === 'en' ? 'All rights reserved.' : 'جميع الحقوق محفوظة.'}
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="w-8 h-[1px] bg-ivory/5" />
+            <span className="font-display text-xs text-ivory/10 tracking-widest">SOLIDE</span>
+            <div className="w-8 h-[1px] bg-ivory/5" />
+          </div>
+          <p className="text-center text-ivory/10 text-[10px]">
+            © {new Date().getFullYear()} Solide. {lang === 'en' ? 'All rights reserved.' : 'جميع الحقوق محفوظة.'}
+          </p>
         </div>
       </footer>
     </div>

@@ -26,9 +26,9 @@ export default function AdminProjectForm() {
   const { id } = useParams()
   const navigate = useNavigate()
   const isEdit = !!id
-  const [form, setForm] = useState<FormData>({
+  const [form, setForm] = useState<FormData & { featured: boolean }>({
     title: '', description: '', category: 'تشكيل معادن',
-    type: translations.projectTypes.ar[0], images: '[]', videos: '[]', models3d: '[]', beforeImage: '', status: 'draft',
+    type: translations.projectTypes.ar[0], images: '[]', videos: '[]', models3d: '[]', beforeImage: '', status: 'draft', featured: false,
   })
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -45,11 +45,11 @@ export default function AdminProjectForm() {
         setForm({
           title: p.title, description: p.description, category: p.category,
           type: p.type, images: p.images, videos: p.videos,
-          models3d: p.models3d, beforeImage: p.beforeImage || '', status: p.status,
+          models3d: p.models3d, beforeImage: p.beforeImage || '', status: p.status, featured: p.featured,
         })
-      }).catch(() => navigate('/admin/projects'))
+      })      .catch(() => navigate('/admin/projects'))
     }
-  }, [id])
+  }, [id, navigate])
 
   const parseItems = (field: 'images' | 'videos' | 'models3d'): MediaItem[] => {
     try {
@@ -316,6 +316,20 @@ export default function AdminProjectForm() {
               <option value="draft">Draft</option>
               <option value="published">Published</option>
             </select>
+          </div>
+          <div className="flex items-center gap-3">
+            <label className="text-xs text-white/50">Featured</label>
+            <button
+              type="button"
+              onClick={() => setForm({...form, featured: !form.featured})}
+              className={`relative w-10 h-5 rounded-full transition-all duration-300 ${
+                form.featured ? 'bg-gold' : 'bg-white/10'
+              }`}
+            >
+              <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all duration-300 ${
+                form.featured ? 'left-5' : 'left-0.5'
+              }`} />
+            </button>
           </div>
         </div>
 

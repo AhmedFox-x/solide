@@ -17,7 +17,7 @@ const iconMap: Record<string, React.ElementType> = {
 
 export default function ContactSection({ lang, orderProject }: Props) {
   const t = translations.contact[lang];
-  const EG_PHONE = /^01[0-2,5]{1}[0-9]{8}$/;
+  const EG_PHONE = /^01[0-25][0-9]{8}$/;
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const initialMessage = orderProject
     ? (lang === 'en'

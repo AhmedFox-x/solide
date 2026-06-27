@@ -20,6 +20,33 @@ body {
   overflow-x: hidden;
 }
 
+::selection {
+  background: rgba(200, 150, 60, 0.25);
+  color: #F2E8D0;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #03050D;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(200, 150, 60, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 150, 60, 0.4);
+}
+
+:focus-visible {
+  outline: 1px solid rgba(200, 150, 60, 0.4);
+  outline-offset: 2px;
+}
+
 .text-gold-gradient {
   background: linear-gradient(135deg, #C8963C, #E0B050, #F5CC6A);
   -webkit-background-clip: text;

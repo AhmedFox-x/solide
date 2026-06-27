@@ -9,7 +9,7 @@ export const translations = {
       body: "We transform raw metal into architectural expressions. Every weld, every cut, every finish carries the weight of our commitment to precision.",
       stats: [
         { label: "Projects Delivered", value: "350+" },
-        { label: "Years Experience", value: "35" },
+        { label: "Years Experience", value: "18" },
         { label: "Countries Served", value: "2" },
         { label: "Response Time", value: "24h" },
       ],
@@ -19,7 +19,7 @@ export const translations = {
       body: "نحول المعدن الخام إلى تعابير معمارية. كل لحام، كل قطعة، كل لمسة نهائية تحمل ثقل التزامنا بالدقة.",
       stats: [
         { label: "مشروع منجز", value: "٣٥٠+" },
-        { label: "سنوات خبرة", value: "٣٥" },
+        { label: "سنوات خبرة", value: "١٨" },
         { label: "دولة خدمناها", value: "٢" },
         { label: "وقت الاستجابة", value: "٢٤ ساعة" },
       ],
