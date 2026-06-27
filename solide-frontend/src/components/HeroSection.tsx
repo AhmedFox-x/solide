@@ -4,6 +4,8 @@ import { translations } from "../lib/translations";
 import type { Lang } from "../lib/translations";
 import logo from "../assets/logo-bg.png";
 
+const videoSrc = `${import.meta.env.BASE_URL}video/hero-bg.mp4`;
+
 interface Props {
   lang: Lang;
   setLang: (l: Lang) => void;
@@ -23,6 +25,25 @@ export default function HeroSection({ lang, setLang }: Props) {
       id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
+      {/* video background */}
+      <style>{`@media (prefers-reduced-motion: reduce) { .hero-video { display: none; } }`}</style>
+      <div className="absolute inset-0 overflow-hidden hero-video">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-[2s]"
+          style={{ height: "80vh", top: "50%", transform: "translateY(-50%)" }}
+          onLoadedData={(e) => (e.currentTarget.style.opacity = "1")}
+        >
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+        {/* dark overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-obsidian/80 via-obsidian/60 to-obsidian/90" />
+      </div>
+
       {/* large watermark logo */}
       <motion.div
         style={{ opacity: useTransform(scrollY, [0, 300], [0.1, 0.02]) }}
