@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast'
 
 const HomePage = lazy(() => import('./pages/HomePage'))
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
+const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage'))
 const VideosPage = lazy(() => import('./pages/VideosPage'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'))
@@ -31,6 +32,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/project/:id" element={<ProjectDetailPage />} />
           <Route path="/videos" element={<VideosPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>

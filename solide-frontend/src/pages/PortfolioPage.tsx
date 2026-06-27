@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Lang } from '../lib/translations'
 import { translations } from '../lib/translations'
@@ -7,6 +8,7 @@ import { projectsApi } from '../lib/api'
 import type { Project } from '../lib/api'
 import GeometricBg from '../components/GeometricBg'
 import AppNavbar from '../components/AppNavbar'
+
 import logo from '../assets/logo-bg.png'
 
 function parseList(v: string | null | undefined): string[] {
@@ -35,7 +37,6 @@ export default function PortfolioPage() {
     { key: 'models3d' as const, label: t.filterModels },
   ]
 
-  // compute project cards (filter all) and media items (filter images/models3d)
   const cards = useMemo(() => {
     return projects.filter(p => typeFilter === 'all' || p.type === typeFilter)
       .filter(p => filter === 'all' ? (parseList(p.images).length > 0 || parseList(p.models3d).length > 0 || !!p.beforeImage) : true)
@@ -43,6 +44,7 @@ export default function PortfolioPage() {
         id: p.id, title: p.title, category: p.category, type: p.type,
         description: p.description,
         coverImage: p.beforeImage || (parseList(p.images)[0] || null),
+        imageCount: parseList(p.images).length + (p.beforeImage ? 1 : 0) + (p.afterImage ? 1 : 0),
       }))
   }, [projects, filter, typeFilter])
 
@@ -76,9 +78,12 @@ export default function PortfolioPage() {
           >
             <span className="text-gold/60 text-xs tracking-[0.3em] uppercase">{translations.navbar[lang][3]}</span>
             <h1 className="text-3xl md:text-5xl font-display text-ivory mt-2">{t.heading}</h1>
+            <p className="text-sm text-ivory/30 mt-3 max-w-xl">
+              {lang === 'ar' ? 'تصفح مجموعتنا من التصاميم الحصرية. اختر ما يناسبك ونحن ننفذه لك بأعلى جودة.' : 'Browse our exclusive collection of designs. Choose what suits you and we will execute it with the highest quality.'}
+            </p>
           </motion.div>
 
-          {/* media type filters */}
+          {/* filters */}
           <div className="flex flex-wrap gap-2 mb-5">
             {filters.map(f => (
               <button key={f.key} onClick={() => setFilter(f.key)}
@@ -89,61 +94,86 @@ export default function PortfolioPage() {
             ))}
           </div>
 
-          {/* project type filters */}
           <div className="flex flex-wrap gap-2 mb-10">
             <button onClick={() => setTypeFilter('all')}
               className={`px-3 py-1 text-[11px] tracking-wider transition-all ${
                 typeFilter === 'all' ? 'bg-ivory/10 text-ivory' : 'text-ivory/30 border border-ivory/10 hover:border-ivory/30'
               }`}
             >{t.filterTypeAll}</button>
-            {projectTypes.map(t => (
-              <button key={t} onClick={() => setTypeFilter(t)}
+            {projectTypes.map(ty => (
+              <button key={ty} onClick={() => setTypeFilter(ty)}
                 className={`px-3 py-1 text-[11px] tracking-wider transition-all ${
-                  typeFilter === t ? 'bg-ivory/10 text-ivory' : 'text-ivory/30 border border-ivory/10 hover:border-ivory/30'
+                  typeFilter === ty ? 'bg-ivory/10 text-ivory' : 'text-ivory/30 border border-ivory/10 hover:border-ivory/30'
                 }`}
-              >{t}</button>
+              >{ty}</button>
             ))}
           </div>
 
-          {/* grid */}
           <AnimatePresence mode="wait">
             {filter === 'all' ? (
               <motion.div key="all" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
+                className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
               >
                 {cards.map((item) => (
                   <motion.div key={item.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }} className="break-inside-avoid"
+                    transition={{ duration: 0.4 }}
                   >
-                    <div className="group relative overflow-hidden border border-ivory/5 hover:border-gold/15 transition-all bg-ivory/[0.015]">
-                      {item.coverImage ? (
-                        <button onClick={() => setLightbox(item.coverImage)} className="block w-full">
-                          <img src={assetUrl(item.coverImage)}
-                            alt={item.title} className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                            style={{ minHeight: 200, maxHeight: 450 }} loading="lazy" />
-                        </button>
-                      ) : (
-                        <div className="w-full flex items-center justify-center bg-ivory/[0.02] py-16">
-                          <div className="text-center">
-                            <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-ivory/10 flex items-center justify-center text-ivory/20 text-xl font-display">
-                              {item.title.charAt(0).toUpperCase()}
+                    <Link to={`/project/${item.id}`}
+                      className="group relative block border border-ivory/5 hover:border-gold/15 transition-all duration-500 bg-ivory/[0.015] h-full"
+                    >
+                      {/* image */}
+                      <div className="relative overflow-hidden" style={{ aspectRatio: '4/3' }}>
+                        {item.coverImage ? (
+                          <>
+                            <img src={assetUrl(item.coverImage)}
+                              alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]" loading="lazy" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-obsidian/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                          </>
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-ivory/[0.02]">
+                            <div className="text-center">
+                              <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-ivory/10 flex items-center justify-center text-ivory/20 text-xl font-display">
+                                {item.title.charAt(0).toUpperCase()}
+                              </div>
+                              <p className="text-xs text-ivory/20">{item.category}</p>
                             </div>
-                            <p className="text-xs text-ivory/20">{item.category}</p>
                           </div>
+                        )}
+
+                        {/* image count badge */}
+                        {item.imageCount > 1 && item.coverImage && (
+                          <div className="absolute top-3 right-3 bg-obsidian/70 backdrop-blur-sm px-2 py-0.5 text-[10px] text-ivory/60 tracking-wider border border-ivory/10">
+                            +{item.imageCount - 1}
+                          </div>
+                        )}
+
+                        {/* quick view overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+                          <span className="bg-obsidian/80 backdrop-blur-sm border border-gold/30 text-gold text-[10px] tracking-[0.2em] uppercase px-5 py-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                            {lang === 'ar' ? 'عرض التصميم' : 'View Design'}
+                          </span>
                         </div>
-                      )}
-                      <div className="p-5">
+                      </div>
+
+                      {/* info */}
+                      <div className="p-4">
                         <div className="flex flex-wrap gap-1.5 mb-2">
                           <span className="text-[10px] px-2 py-0.5 bg-gold/10 text-gold/70 tracking-wider">{item.type}</span>
                           <span className="text-[10px] px-2 py-0.5 bg-ivory/5 text-ivory/40">{item.category}</span>
                         </div>
-                        <h3 className="text-base font-serif text-ivory">{item.title}</h3>
+                        <h3 className="text-sm font-serif text-ivory group-hover:text-gold transition-colors duration-300">{item.title}</h3>
                         {item.description && (
-                          <p className="text-sm text-ivory/50 mt-2 leading-relaxed line-clamp-3">{item.description}</p>
+                          <p className="text-xs text-ivory/40 mt-1.5 leading-relaxed line-clamp-2">{item.description}</p>
                         )}
+
+                        {/* order hint */}
+                        <div className="mt-3 flex items-center gap-1.5 text-[10px] tracking-wider text-gold/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                          <span className="w-4 h-[1px] bg-gold/40" />
+                          <span>{lang === 'ar' ? 'اطلب التصميم' : 'Order this design'}</span>
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   </motion.div>
                 ))}
               </motion.div>
@@ -177,7 +207,9 @@ export default function PortfolioPage() {
                         </div>
                       )}
                       <div className="p-4">
-                        <p className="text-sm font-serif text-ivory/70">{item.projectTitle}</p>
+                        <Link to={`/project/${item.projectId}`}
+                          className="text-sm font-serif text-ivory/70 hover:text-gold transition-colors"
+                        >{item.projectTitle}</Link>
                       </div>
                     </div>
                   </motion.div>
@@ -198,7 +230,6 @@ export default function PortfolioPage() {
         </div>
       </main>
 
-      {/* lightbox */}
       <AnimatePresence>
         {lightbox && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
