@@ -12,9 +12,9 @@ interface Props {
 export default function HeroSection({ lang, setLang }: Props) {
   const t = translations.hero;
   const { scrollY } = useScroll();
-  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
-  const scale = useTransform(scrollY, [0, 400], [1, 0.9]);
-  const y = useTransform(scrollY, [0, 400], [0, -80]);
+  const opacity = useTransform(scrollY, [0, 500], [1, 0]);
+  const scale = useTransform(scrollY, [0, 500], [1, 0.92]);
+  const y = useTransform(scrollY, [0, 500], [0, -120]);
 
   const otherLang = lang === "en" ? "ar" : "en";
 
@@ -25,15 +25,15 @@ export default function HeroSection({ lang, setLang }: Props) {
     >
       {/* large watermark logo */}
       <motion.div
-        style={{ opacity: useTransform(scrollY, [0, 300], [0.08, 0.02]) }}
+        style={{ opacity: useTransform(scrollY, [0, 300], [0.1, 0.02]) }}
         className="absolute inset-0 flex items-center justify-center pointer-events-none"
       >
         <img
           src={logo}
           alt=""
-          className="w-[70vw] h-[70vw] max-w-[600px] max-h-[600px] object-contain opacity-30"
+          className="w-[80vw] h-[80vw] max-w-[700px] max-h-[700px] object-contain opacity-20"
           style={{
-            filter: "blur(2px) saturate(0.5)",
+            filter: "blur(3px) saturate(0.3)",
             mixBlendMode: "screen",
           }}
         />
@@ -50,7 +50,7 @@ export default function HeroSection({ lang, setLang }: Props) {
       />
 
       {/* radial glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] rounded-full bg-gold/5 blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] h-[70vw] max-w-[800px] max-h-[800px] rounded-full bg-gold/5 blur-[150px] pointer-events-none" />
 
       {/* scan line */}
       <div
@@ -58,9 +58,15 @@ export default function HeroSection({ lang, setLang }: Props) {
         style={{ animation: "scanV 6s ease-in-out infinite" }}
       />
 
+      {/* decorative corners */}
+      <div className="absolute top-8 left-8 w-12 h-12 border-t border-l border-gold/10 pointer-events-none" />
+      <div className="absolute top-8 right-8 w-12 h-12 border-t border-r border-gold/10 pointer-events-none" />
+      <div className="absolute bottom-8 left-8 w-12 h-12 border-b border-l border-gold/10 pointer-events-none" />
+      <div className="absolute bottom-8 right-8 w-12 h-12 border-b border-r border-gold/10 pointer-events-none" />
+
       <motion.div
         style={{ opacity, scale, y }}
-        className="relative z-10 text-center px-4 max-w-4xl mx-auto"
+        className="relative z-10 text-center px-4 max-w-5xl mx-auto"
       >
         {/* lang toggle */}
         <button
@@ -70,14 +76,28 @@ export default function HeroSection({ lang, setLang }: Props) {
           {otherLang === "ar" ? "عربي" : "English"}
         </button>
 
+        {/* premium badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-8"
+        >
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 border border-gold/15 text-gold/50 text-[10px] tracking-[0.3em] uppercase font-sans">
+            <span className="w-4 h-[1px] bg-gold/30" />
+            {lang === "en" ? "Premium Metal Craftsmanship" : "الصناعة المعدنية الفاخرة"}
+            <span className="w-4 h-[1px] bg-gold/30" />
+          </span>
+        </motion.div>
+
         {/* subtitle EN */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.35 }}
           className="mb-6"
         >
-          <span className="inline-block px-4 py-1.5 border border-gold/20 text-gold text-xs tracking-[0.25em] uppercase">
+          <span className="inline-block px-5 py-2 border border-gold/20 text-gold text-xs tracking-[0.25em] uppercase">
             {t.en.subtitle}
           </span>
         </motion.div>
@@ -85,10 +105,10 @@ export default function HeroSection({ lang, setLang }: Props) {
         {/* main heading */}
         <motion.h1
           key={`heading-${lang}`}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-display leading-[0.85] mb-6"
+          className="text-6xl sm:text-8xl md:text-9xl lg:text-[140px] font-display leading-[0.82] mb-8"
         >
           <span className="text-gold-gradient">
             {lang === "en" ? "Solide" : "سوليد"}
@@ -101,7 +121,7 @@ export default function HeroSection({ lang, setLang }: Props) {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7 }}
-          className="text-ivory/60 text-lg md:text-2xl font-sans mb-12 leading-relaxed"
+          className="text-ivory/50 text-xl md:text-3xl font-sans mb-14 leading-relaxed"
           style={{ direction: "rtl" }}
         >
           {t.ar.tagline}
@@ -112,22 +132,22 @@ export default function HeroSection({ lang, setLang }: Props) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.9 }}
-          className="flex flex-wrap justify-center gap-4"
+          className="flex flex-wrap justify-center gap-5"
         >
           <Link
             to="/portfolio"
-            className="group relative px-8 py-3.5 overflow-hidden border border-gold text-gold hover:text-obsidian transition-all duration-500 text-sm tracking-[0.15em] uppercase"
+            className="group relative px-10 py-4 overflow-hidden border border-gold text-gold hover:text-obsidian transition-all duration-500 text-sm tracking-[0.15em] uppercase"
           >
-            <span className="relative z-10">
+            <span className="relative z-10 inline-flex items-center gap-2">
               {lang === "en" ? "View Our Work" : "شاهد أعمالنا"}
             </span>
             <span className="absolute inset-0 bg-gold translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
           </Link>
           <a
             href="#contact"
-            className="group relative px-8 py-3.5 overflow-hidden bg-gold text-obsidian text-sm tracking-[0.15em] uppercase font-semibold"
+            className="group relative px-10 py-4 overflow-hidden bg-gold text-obsidian text-sm tracking-[0.15em] uppercase font-semibold"
           >
-            <span className="relative z-10">
+            <span className="relative z-10 inline-flex items-center gap-2">
               {lang === "en" ? "Start a Project" : "ابدأ مشروعاً"}
             </span>
             <span className="absolute inset-0 bg-ivory/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
@@ -140,17 +160,17 @@ export default function HeroSection({ lang, setLang }: Props) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
       >
-        <span className="text-[10px] tracking-[0.2em] uppercase text-ivory/20">
+        <span className="text-[10px] tracking-[0.2em] uppercase text-ivory/15">
           {lang === "en" ? "Scroll" : "اسفل"}
         </span>
         <motion.div
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-4 h-7 border border-ivory/15 rounded-full flex items-start justify-center pt-1.5"
+          className="w-4 h-7 border border-ivory/10 rounded-full flex items-start justify-center pt-1.5"
         >
-          <div className="w-[2px] h-2 bg-gold/40 rounded-full" />
+          <div className="w-[2px] h-2 bg-gold/30 rounded-full" />
         </motion.div>
       </motion.div>
     </section>

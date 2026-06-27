@@ -93,7 +93,7 @@ export const translations = {
         { label: "Facebook", value: "Solide Egypt", icon: "Globe", href: "https://www.facebook.com/solidecompany/" },
         { label: "Location", value: "Cairo, Egypt", icon: "MapPin", href: "#" },
       ],
-      cta: "Request a Free Quote →",
+      cta: "Order Now →",
       formTitle: "Or Send Us a Message",
       preferredContact: "Preferred contact method",
       contactWhatsapp: "WhatsApp",

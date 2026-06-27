@@ -8,17 +8,23 @@ import toast from "react-hot-toast";
 
 interface Props {
   lang: Lang;
+  orderProject?: { id: string; title: string; images: string[] } | null;
 }
 
 const iconMap: Record<string, React.ElementType> = {
   MessageCircle, Phone, Globe, MapPin,
 };
 
-export default function ContactSection({ lang }: Props) {
+export default function ContactSection({ lang, orderProject }: Props) {
   const t = translations.contact[lang];
   const EG_PHONE = /^01[0-2,5]{1}[0-9]{8}$/;
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const initialMessage = orderProject
+    ? (lang === 'en'
+      ? `I'd like to order this design:\n\nProject: ${orderProject.title}\nID: ${orderProject.id}${orderProject.images[0] ? `\nImage: ${orderProject.images[0]}` : ''}\n\nPlease contact me with more details.`
+      : `أريد طلب هذا التصميم:\n\nالمشروع: ${orderProject.title}\nالرقم: ${orderProject.id}${orderProject.images[0] ? `\nصورة: ${orderProject.images[0]}` : ''}\n\nيرجى التواصل معي للتفاصيل.`)
+    : "";
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: initialMessage });
   const [preferredContact, setPreferredContact] = useState<"whatsapp" | "email">("whatsapp");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
