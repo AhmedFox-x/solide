@@ -135,7 +135,6 @@ export default function ProjectDetailPage() {
                   src={assetUrl(allImages[selectedIdx])}
                   alt={project.title}
                   zoom={2.5}
-                  lensSize={140}
                   className="w-full h-full bg-ivory/[0.02]"
                   lang={lang}
                 />
