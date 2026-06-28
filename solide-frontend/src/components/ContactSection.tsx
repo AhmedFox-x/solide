@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, Phone, Globe, MapPin, ArrowRight, ArrowLeft, Send, Upload, Check } from "lucide-react";
+import { MessageCircle, Phone, Globe, MapPin, ArrowRight, ArrowLeft, Send, Check, ImagePlus } from "lucide-react";
 import { translations } from "../lib/translations";
 import type { Lang } from "../lib/translations";
 import { ticketsApi } from "../lib/api";
+import type { OrderProject } from "../lib/api";
 import toast from "react-hot-toast";
 
 interface Props {
   lang: Lang;
-  orderProject?: { id: string; title: string; images: string[] } | null;
+  orderProject?: OrderProject | null;
 }
 
 const iconMap: Record<string, React.ElementType> = {
@@ -24,32 +25,31 @@ const stepVariants = {
 
 export default function ContactSection({ lang, orderProject }: Props) {
   const t = translations.contact[lang];
-  const projectTypes = translations.projectTypes[lang];
-  const initialMessage = orderProject
-    ? (lang === 'en'
-      ? `I'd like to order this design:\n\nProject: ${orderProject.title}\nID: ${orderProject.id}${orderProject.images[0] ? `\nImage: ${orderProject.images[0]}` : ''}\n\nPlease contact me with more details.`
-      : `أريد طلب هذا التصميم:\n\nالمشروع: ${orderProject.title}\nالرقم: ${orderProject.id}${orderProject.images[0] ? `\nصورة: ${orderProject.images[0]}` : ''}\n\nيرجى التواصل معي للتفاصيل.`)
-    : "";
-
-  const [step, setStep] = useState(0);
+  const baseTypes = translations.projectTypes[lang];
+  const projectTypes = [...baseTypes, lang === 'en' ? 'Other' : 'أخرى'];
+  const [step, setStep] = useState(orderProject ? 1 : 0);
   const [dir, setDir] = useState(1);
-  const [selectedType, setSelectedType] = useState<string>("");
+  const [selectedType, setSelectedType] = useState(orderProject?.type || "");
   const [dimensions, setDimensions] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [name, setName] = useState(orderProject?.title ? `طلب ${orderProject.title}` : "");
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
   const [preferredContact, setPreferredContact] = useState<"whatsapp" | "email">("whatsapp");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
 
   const next = () => { setDir(1); setStep(s => Math.min(s + 1, 2)) };
-  const prev = () => { setDir(-1); setStep(s => Math.max(s - 1, 0)) };
+  const prev = () => { setDir(-1); setStep(s => Math.max(s - 1, orderProject ? 1 : 0)) };
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
-    if (step === 0 && !selectedType) errs.type = lang === "en" ? "Please select a project type" : "اختر نوع العمل";
-    if (step === 2) {
+    if (!orderProject && step === 0 && !selectedType) {
+      errs.type = lang === "en" ? "Please select a project type" : "اختر نوع العمل";
+    }
+    if (step === (orderProject ? 1 : 2)) {
       if (!name.trim()) errs.name = lang === "en" ? "Name is required" : "الاسم مطلوب";
       const clean = phone.replace(/\s/g, "");
       if (!clean) errs.phone = lang === "en" ? "Phone is required" : "رقم الهاتف مطلوب";
@@ -68,15 +68,24 @@ export default function ContactSection({ lang, orderProject }: Props) {
     if (!validate()) return;
     setSending(true);
     try {
-      const message = orderProject
-        ? initialMessage
-        : (lang === 'en'
-          ? `Project type: ${selectedType}\nDimensions: ${dimensions || 'N/A'}\n\nName: ${name}\nPhone: ${phone}`
-          : `نوع العمل: ${selectedType}\nالأبعاد: ${dimensions || 'لا يوجد'}\n\nالاسم: ${name}\nرقم الهاتف: ${phone}`);
+      const msgParts: string[] = []
+      if (orderProject) {
+        msgParts.push(lang === 'en'
+          ? `Order: ${orderProject.title} (${orderProject.id})`
+          : `طلب: ${orderProject.title} (${orderProject.id})`);
+        if (orderProject.images[0]) msgParts.push(`Image: ${orderProject.images[0]}`);
+      } else {
+        msgParts.push(`${lang === 'en' ? 'Type' : 'نوع العمل'}: ${selectedType}`);
+      }
+      if (dimensions) msgParts.push(`${lang === 'en' ? 'Dimensions' : 'الأبعاد'}: ${dimensions}`);
+      if (message) msgParts.push(`${lang === 'en' ? 'Message' : 'الرسالة'}: ${message}`);
+      msgParts.push(`${lang === 'en' ? 'Name' : 'الاسم'}: ${name}`);
+      msgParts.push(`${lang === 'en' ? 'Phone' : 'الهاتف'}: ${phone}`);
+
       await ticketsApi.create({
-        name, email: preferredContact === 'email' ? name : '', phone,
-        subject: `Contact from ${name}`,
-        message,
+        name, email: preferredContact === 'email' ? email : '', phone,
+        subject: `Order from ${name}${orderProject ? ` - ${orderProject.title}` : ''}`,
+        message: msgParts.join('\n'),
         preferredContact,
       });
       setDone(true);
@@ -87,6 +96,9 @@ export default function ContactSection({ lang, orderProject }: Props) {
       setSending(false);
     }
   };
+
+  const steps = orderProject ? [1, 2] : [0, 1, 2];
+  const stepIndex = steps.indexOf(step);
 
   return (
     <section id="contact" className="relative py-28 md:py-36 px-4 overflow-hidden">
@@ -164,6 +176,21 @@ export default function ContactSection({ lang, orderProject }: Props) {
             {done ? (lang === 'en' ? 'Message Sent' : 'تم الإرسال') : t.formTitle}
           </p>
 
+          {/* order guide */}
+          {orderProject && !done && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-xl mx-auto mb-8 p-4 border border-gold/20 bg-gold/[0.03]"
+            >
+              <p className="text-xs text-gold/70 leading-relaxed">
+                {lang === 'en'
+                  ? `You are ordering: "${orderProject.title}". Fill in your details below and we will contact you to complete the implementation.`
+                  : `أنت بصدد تنفيذ: "${orderProject.title}". قم بإدخال بياناتك وسنقوم بالتواصل معك لإتمام التنفيذ.`}
+              </p>
+            </motion.div>
+          )}
+
           {!done ? (
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -174,22 +201,22 @@ export default function ContactSection({ lang, orderProject }: Props) {
             >
               {/* step indicators */}
               <div className="flex items-center justify-center gap-2 mb-10">
-                {[0, 1, 2].map((i) => (
+                {steps.map((i, idx) => (
                   <div key={i} className="flex items-center">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold transition-all duration-300 ${
-                      step === i ? 'bg-gold text-obsidian' : step > i ? 'bg-gold/30 text-obsidian' : 'bg-ivory/5 text-ivory/30 border border-ivory/10'
+                      stepIndex === idx ? 'bg-gold text-obsidian' : stepIndex > idx ? 'bg-gold/30 text-obsidian' : 'bg-ivory/5 text-ivory/30 border border-ivory/10'
                     }`}>
-                      {step > i ? <Check className="w-4 h-4" /> : i + 1}
+                      {stepIndex > idx ? <Check className="w-4 h-4" /> : idx + 1}
                     </div>
-                    {i < 2 && <div className={`w-8 md:w-12 h-[1px] ${step > i ? 'bg-gold/50' : 'bg-ivory/10'}`} />}
+                    {idx < steps.length - 1 && <div className={`w-8 md:w-12 h-[1px] ${stepIndex > idx ? 'bg-gold/50' : 'bg-ivory/10'}`} />}
                   </div>
                 ))}
               </div>
 
               {/* step titles */}
               <p className="text-xs tracking-[0.2em] uppercase text-ivory/40 mb-8">
-                {step === 0 ? (lang === 'en' ? 'Choose project type' : 'اختر نوع العمل') :
-                 step === 1 ? (lang === 'en' ? 'Project details (optional)' : 'تفاصيل المشروع (اختياري)') :
+                {!orderProject && step === 0 ? (lang === 'en' ? 'Choose project type' : 'اختر نوع العمل') :
+                 step === (orderProject ? 1 : 1) ? (lang === 'en' ? 'Project details (optional)' : 'تفاصيل المشروع (اختياري)') :
                  (lang === 'en' ? 'Your contact info' : 'معلومات التواصل')}
               </p>
 
@@ -205,8 +232,8 @@ export default function ContactSection({ lang, orderProject }: Props) {
                   className="text-right"
                   style={{ direction: lang === 'ar' ? 'rtl' : 'ltr' }}
                 >
-                  {/* Step 1: Project type */}
-                  {step === 0 && (
+                  {/* Step 0: Project type (only when NOT ordering from project) */}
+                  {step === 0 && !orderProject && (
                     <div className="grid grid-cols-2 gap-3">
                       {projectTypes.map(ty => (
                         <button key={ty} type="button" onClick={() => { setSelectedType(ty); setErrors({}) }}
@@ -222,40 +249,22 @@ export default function ContactSection({ lang, orderProject }: Props) {
                     </div>
                   )}
 
-                  {/* Step 2: Dimensions + file upload */}
-                  {step === 1 && (
-                    <div className="space-y-5">
-                      <div>
-                        <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2 text-left" style={{ direction: 'ltr' }}>
-                          {lang === 'en' ? 'Approximate dimensions' : 'الأبعاد التقريبية'}
-                          <span className="text-ivory/15 text-[10px] mr-2">({lang === 'en' ? 'optional' : 'اختياري'})</span>
-                        </label>
-                        <input value={dimensions} onChange={(e) => setDimensions(e.target.value)}
-                          className="w-full bg-ivory/5 border border-ivory/10 px-4 py-3 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50"
-                          placeholder={lang === 'en' ? 'e.g. 2m x 1.5m' : 'مثلاً: ٢م × ١.٥م'}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2 text-left" style={{ direction: 'ltr' }}>
-                          {lang === 'en' ? 'Upload a sketch or reference image' : 'ارفع صورة أو رسمة توضيحية'}
-                          <span className="text-ivory/15 text-[10px] mr-2">({lang === 'en' ? 'optional' : 'اختياري'})</span>
-                        </label>
-                        <label className="flex items-center justify-center gap-3 w-full p-6 border border-dashed border-ivory/10 bg-ivory/[0.015] cursor-pointer hover:border-gold/30 transition-colors">
-                          <input type="file" accept="image/*" className="hidden"
-                            onChange={(e) => setFile(e.target.files?.[0] || null)}
-                          />
-                          <Upload className="w-5 h-5 text-gold/50" />
-                          <span className="text-xs text-ivory/40">
-                            {file ? file.name : (lang === 'en' ? 'Click to upload' : 'اضغط لرفع صورة')}
-                          </span>
-                        </label>
-                      </div>
+                  {/* Step 1: Dimensions (optional) */}
+                  {step === (orderProject ? 1 : 1) && (
+                    <div>
+                      <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2 text-left" style={{ direction: 'ltr' }}>
+                        {lang === 'en' ? 'Approximate dimensions' : 'الأبعاد التقريبية'}
+                        <span className="text-ivory/15 text-[10px] mr-2">({lang === 'en' ? 'optional' : 'اختياري'})</span>
+                      </label>
+                      <input value={dimensions} onChange={(e) => setDimensions(e.target.value)}
+                        className="w-full bg-ivory/5 border border-ivory/10 px-4 py-3 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50"
+                        placeholder={lang === 'en' ? 'e.g. 2m x 1.5m' : 'مثلاً: ٢م × ١.٥م'}
+                      />
                     </div>
                   )}
 
-                  {/* Step 3: Name + phone + submit */}
-                  {step === 2 && (
+                  {/* Step 2: Name + phone + message + submit */}
+                  {step === (orderProject ? 1 : 2) && (
                     <div className="space-y-5 text-left" style={{ direction: 'ltr' }}>
                       <div>
                         <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2">{t.name}</label>
@@ -295,6 +304,43 @@ export default function ContactSection({ lang, orderProject }: Props) {
                         />
                         {errors.phone && <p className="text-[10px] text-red-400/70 mt-1">{errors.phone}</p>}
                       </div>
+
+                      {preferredContact === 'email' && (
+                        <div>
+                          <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2">{t.email}</label>
+                          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                            className="w-full bg-ivory/5 border border-ivory/10 px-4 py-3 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50"
+                            placeholder={lang === "en" ? "your@email.com" : "بريدك الإلكتروني"}
+                          />
+                        </div>
+                      )}
+
+                      {/* optional message */}
+                      <div>
+                        <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2">
+                          {lang === 'en' ? 'Message (optional)' : 'رسالة (اختياري)'}
+                        </label>
+                        <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3}
+                          className="w-full bg-ivory/5 border border-ivory/10 px-4 py-3 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 resize-none"
+                          placeholder={lang === 'en' ? 'Any additional details...' : 'أي تفاصيل إضافية...'}
+                        />
+                      </div>
+
+                      {/* optional file upload */}
+                      <div>
+                        <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2">
+                          {lang === 'en' ? 'Attach an image (optional)' : 'أرفق صورة (اختياري)'}
+                        </label>
+                        <label className="flex items-center justify-center gap-3 w-full p-4 border border-dashed border-ivory/10 bg-ivory/[0.015] cursor-pointer hover:border-gold/30 transition-colors">
+                          <input type="file" accept="image/*" className="hidden"
+                            onChange={(e) => setFile(e.target.files?.[0] || null)}
+                          />
+                          <ImagePlus className="w-5 h-5 text-gold/50" />
+                          <span className="text-xs text-ivory/40">
+                            {file ? file.name : (lang === 'en' ? 'Click to upload' : 'اضغط لرفع صورة')}
+                          </span>
+                        </label>
+                      </div>
                     </div>
                   )}
                 </motion.div>
@@ -302,14 +348,14 @@ export default function ContactSection({ lang, orderProject }: Props) {
 
               {/* navigation buttons */}
               <div className={`flex gap-3 mt-8 ${lang === 'ar' ? 'flex-row' : 'flex-row-reverse'}`}>
-                {step > 0 && (
+                {step > (orderProject ? 1 : 0) && (
                   <button onClick={prev}
                     className="flex-1 py-3 border border-ivory/10 text-ivory/50 text-xs tracking-[0.15em] uppercase hover:border-ivory/30 transition-all"
                   >
                     {lang === 'ar' ? 'السابق' : 'Back'}
                   </button>
                 )}
-                {step < 2 ? (
+                {step < (orderProject ? 1 : 2) ? (
                   <button onClick={handleNext}
                     className="flex-1 py-3 bg-gold text-obsidian text-xs tracking-[0.15em] uppercase font-semibold hover:bg-gold/90 transition-all"
                   >
@@ -320,7 +366,7 @@ export default function ContactSection({ lang, orderProject }: Props) {
                     className="flex-1 py-3 bg-gold text-obsidian text-xs tracking-[0.15em] uppercase font-semibold hover:bg-gold/90 transition-all disabled:opacity-50 inline-flex items-center justify-center gap-2"
                   >
                     <Send className="w-4 h-4" />
-                    {sending ? (lang === "en" ? "Sending..." : "جار الإرسال...") : t.submit}
+                    {sending ? (lang === "en" ? "Sending..." : "جار الإرسال...") : (orderProject ? (lang === 'en' ? 'Send Order' : 'إرسال الطلب') : t.submit)}
                   </button>
                 )}
               </div>
@@ -332,9 +378,26 @@ export default function ContactSection({ lang, orderProject }: Props) {
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gold/20 flex items-center justify-center">
                 <Check className="w-8 h-8 text-gold" />
               </div>
-              <p className="text-ivory/60 text-sm">
-                {lang === 'en' ? 'We will contact you shortly.' : 'سنقوم بالتواصل معك قريباً.'}
-              </p>
+              {orderProject ? (
+                <div>
+                  <p className="text-ivory/80 text-sm font-serif mb-3">
+                    {lang === 'en'
+                      ? `Your order for "${orderProject.title}" has been received.`
+                      : `تم استلام طلبك لتنفيذ "${orderProject.title}".`}
+                  </p>
+                  <p className="text-ivory/50 text-xs">
+                    {lang === 'en'
+                      ? 'We will contact you within 24 hours to start the implementation.'
+                      : 'سنتواصل معك خلال ٢٤ ساعة لبدء التنفيذ.'}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-ivory/60 text-sm">
+                    {lang === 'en' ? 'We will contact you shortly.' : 'سنقوم بالتواصل معك قريباً.'}
+                  </p>
+                </div>
+              )}
             </motion.div>
           )}
         </div>

@@ -1,0 +1,211 @@
+- generic [ref=e6]:
+  - navigation [ref=e7]:
+    - generic [ref=e8]:
+      - link "Solide SOLIDE" [ref=e9] [cursor=pointer]:
+        - /url: "#/"
+        - img "Solide" [ref=e11]
+        - generic [ref=e13]: SOLIDE
+      - generic [ref=e14]:
+        - link "الرئيسية" [ref=e15] [cursor=pointer]:
+          - /url: "#/"
+          - text: الرئيسية
+        - link "أعمالنا" [ref=e17] [cursor=pointer]:
+          - /url: "#/portfolio"
+        - link "فيديو" [ref=e18] [cursor=pointer]:
+          - /url: "#/videos"
+        - button "EN" [ref=e20] [cursor=pointer]
+  - main [ref=e21]:
+    - generic [ref=e22]:
+      - generic [ref=e26]:
+        - button "English" [ref=e27] [cursor=pointer]
+        - generic [ref=e29]: الصناعة المعدنية الفاخرة
+        - generic [ref=e33]: Precision Metal Fabrication
+        - heading "سوليد" [level=1] [ref=e34]
+        - paragraph [ref=e35]: فن الحديد الكريتال، محدّد بالتصميم
+        - generic [ref=e36]:
+          - link "شاهد أعمالنا" [ref=e37] [cursor=pointer]:
+            - /url: "#/portfolio"
+            - generic [ref=e38]: شاهد أعمالنا
+          - link "ابدأ مشروعاً" [ref=e41] [cursor=pointer]:
+            - /url: "#contact"
+            - generic [ref=e42]: ابدأ مشروعاً
+      - generic [ref=e46]: اسفل
+    - generic [ref=e51]:
+      - generic [ref=e52]:
+        - text: عن
+        - heading "فن الحديد الكريتال" [level=2] [ref=e53]:
+          - text: فن
+          - text: الحديد الكريتال
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - generic [ref=e56]: "18"
+          - generic [ref=e57]: سنوات من الدقة
+        - generic [ref=e58]:
+          - paragraph [ref=e59]: We transform raw metal into architectural expressions. Every weld, every cut, every finish carries the weight of our commitment to precision.
+          - paragraph [ref=e60]: نحول المعدن الخام إلى تعابير معمارية. كل لحام، كل قطعة، كل لمسة نهائية تحمل ثقل التزامنا بالدقة.
+      - generic [ref=e61]:
+        - generic [ref=e65]:
+          - generic [ref=e66]: ٣٥٠+
+          - generic [ref=e67]: مشروع منجز
+        - generic [ref=e71]:
+          - generic [ref=e72]: ١٨
+          - generic [ref=e73]: سنوات خبرة
+        - generic [ref=e77]:
+          - generic [ref=e78]: ٢
+          - generic [ref=e79]: دولة خدمناها
+        - generic [ref=e83]:
+          - generic [ref=e84]: ٢٤ ساعة
+          - generic [ref=e85]: وقت الاستجابة
+    - generic [ref=e89]:
+      - generic [ref=e90]:
+        - text: الخدمات
+        - heading "خدماتنا" [level=2] [ref=e91]
+      - generic [ref=e92]:
+        - generic [ref=e94]:
+          - img [ref=e97]
+          - heading "السلالم والدرابزين" [level=3] [ref=e99]
+          - paragraph [ref=e100]: سلالم كريتال داخلية وخارجية مع درابزين بتفاصيل دقيقة وطلاء إلكتروستاتيك يضمن جمالاً وعمراً أطول.
+        - generic [ref=e102]:
+          - img [ref=e105]
+          - heading "الشبابيك والأبواب" [level=3] [ref=e107]
+          - paragraph [ref=e108]: شبابيك كريتال خارجية وشبابيك حماية وبوابات بتصاميم عصرية وكلاسيكية تليق بمشروعك.
+        - generic [ref=e110]:
+          - img [ref=e113]
+          - heading "البلكونات والأسوار" [level=3] [ref=e115]
+          - paragraph [ref=e116]: أسوار ومحيطات حديد كريتال للفيلات والمباني — قوة وجمال في قطعة واحدة بمواصفات عالمية.
+        - generic [ref=e118]:
+          - img [ref=e121]
+          - heading "البوابات والمداخل" [level=3] [ref=e123]
+          - paragraph [ref=e124]: بوابات كريتال فاخرة للفيلات والمجمعات — تصاميم يدوية فريدة تجمع بين الأمان والجماليات.
+        - generic [ref=e126]:
+          - img [ref=e129]
+          - heading "طلاء إلكتروستاتيك" [level=3] [ref=e131]
+          - paragraph [ref=e132]: طبقة حماية مقاومة للصدأ والعوامل الجوية — معيار ثابت على كل قطعة بدون استثناء.
+        - generic [ref=e134]:
+          - img [ref=e137]
+          - heading "التركيب والصيانة" [level=3] [ref=e139]
+          - paragraph [ref=e140]: فريق تركيب متخصص مع ضمان سنتين وخدمة صيانة تستلم شغلك زي الأول.
+    - generic [ref=e142]:
+      - generic [ref=e143]:
+        - generic [ref=e144]: — فيديو —
+        - heading "في الحركة" [level=2] [ref=e145]
+      - iframe [ref=e147]:
+        - generic [active] [ref=f1e1]:
+          - generic "YouTube Video Player" [ref=f1e3]
+          - generic [ref=f1e5]:
+            - generic:
+              - generic:
+                - button "Play video" [ref=f1e10] [cursor=pointer]
+                - button "Hide player controls" [ref=f1e12] [cursor=pointer]
+                - generic [ref=f1e14]:
+                  - generic [ref=f1e19]:
+                    - generic [ref=f1e20]:
+                      - link "Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster)" [ref=f1e21] [cursor=pointer]:
+                        - /url: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+                      - link "Rick Astley" [ref=f1e22] [cursor=pointer]:
+                        - /url: /channel/UCuAXFkgsw1L7xaCfnd5JJOw
+                        - generic [ref=f1e23]: Rick Astley
+                    - generic [ref=f1e24]:
+                      - button [ref=f1e25] [cursor=pointer]
+                      - generic [ref=f1e27]:
+                        - generic: Rick Astley
+                        - generic: 4.51M subscribers
+                  - generic [ref=f1e28]:
+                    - button "Share" [ref=f1e31] [cursor=pointer]:
+                      - generic [ref=f1e35]:
+                        - img
+                    - link "Watch on YouTube" [ref=f1e42] [cursor=pointer]:
+                      - /url: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+                      - generic [ref=f1e45]:
+                        - text: Watch on
+                        - img [ref=f1e47]:
+                          - generic [ref=f1e49]:
+                            - img
+    - generic [ref=e149]:
+      - text: آراء
+      - heading "اراء العملاء" [level=2] [ref=e150]
+      - generic [ref=e152]:
+        - img [ref=e153]
+        - paragraph [ref=e155]: “اجمل شركة كده كده”
+        - paragraph [ref=e156]: عبدالله سيد
+        - paragraph [ref=e157]: رائيس شركة Solide
+      - generic [ref=e158]:
+        - button "← السابق" [ref=e159] [cursor=pointer]
+        - generic [ref=e160]:
+          - button [ref=e161] [cursor=pointer]
+          - button [ref=e162] [cursor=pointer]
+        - button "التالي →" [ref=e163] [cursor=pointer]
+    - generic [ref=e167]:
+      - generic [ref=e168]:
+        - generic [ref=e169]: نبني معاك
+        - heading "SOLIDE" [level=2] [ref=e170]
+        - paragraph [ref=e171]: نبني معاك من أول خطوة
+      - generic [ref=e172]:
+        - link "واتساب ‎01060512080" [ref=e173] [cursor=pointer]:
+          - /url: https://wa.me/201060512080
+          - img [ref=e174]
+          - generic [ref=e176]: واتساب
+          - generic [ref=e177]: ‎01060512080
+        - link "اتصال ‎01060512080" [ref=e178] [cursor=pointer]:
+          - /url: tel:+201060512080
+          - img [ref=e179]
+          - generic [ref=e181]: اتصال
+          - generic [ref=e182]: ‎01060512080
+        - link "فيسبوك Solide Egypt" [ref=e183] [cursor=pointer]:
+          - /url: https://www.facebook.com/solidecompany/
+          - img [ref=e184]
+          - generic [ref=e187]: فيسبوك
+          - generic [ref=e188]: Solide Egypt
+        - link "الموقع القاهرة، مصر" [ref=e189] [cursor=pointer]:
+          - /url: "#"
+          - img [ref=e190]
+          - generic [ref=e193]: الموقع
+          - generic [ref=e194]: القاهرة، مصر
+      - button "اطلب الان" [ref=e195] [cursor=pointer]:
+        - generic [ref=e196]: اطلب الان
+        - img [ref=e197]
+      - generic [ref=e199]:
+        - paragraph [ref=e200]: أو أرسل لنا رسالة
+        - generic [ref=e201]:
+          - generic [ref=e202]:
+            - generic [ref=e203]: الاسم
+            - textbox "اسمك" [ref=e204]
+          - generic [ref=e205]:
+            - generic [ref=e206]: وسيلة التواصل المفضلة
+            - generic [ref=e207]:
+              - button "واتساب" [ref=e208] [cursor=pointer]
+              - button "بريد إلكتروني" [ref=e209] [cursor=pointer]
+          - generic [ref=e210]:
+            - generic [ref=e211]: الهاتف
+            - textbox "01X-XXXX-XXXX" [ref=e212]:
+              - /placeholder: " 01X-XXXX-XXXX "
+          - generic [ref=e213]:
+            - generic [ref=e214]: البريد الإلكتروني
+            - textbox "بريدك@ example.com" [ref=e215]
+          - generic [ref=e216]:
+            - generic [ref=e217]: الرسالة
+            - textbox "أخبرنا عن مشروعك..." [ref=e218]
+          - button "إرسال الرسالة" [ref=e219] [cursor=pointer]:
+            - img [ref=e220]
+            - text: إرسال الرسالة
+  - contentinfo [ref=e223]:
+    - generic [ref=e224]:
+      - generic [ref=e225]:
+        - generic [ref=e226]:
+          - text: SOLIDE
+          - paragraph [ref=e227]: صناعة معدنية فاخرة — فن الحديد الكريتال، محدّد بالتصميم.
+        - generic [ref=e228]:
+          - heading "روابط سريعة" [level=4] [ref=e229]
+          - generic [ref=e230]:
+            - link "الرئيسية" [ref=e231] [cursor=pointer]:
+              - /url: "#/"
+            - link "أعمالنا" [ref=e232] [cursor=pointer]:
+              - /url: "#/portfolio"
+            - link "فيديو" [ref=e233] [cursor=pointer]:
+              - /url: "#/videos"
+            - link "اتصل بنا" [ref=e234] [cursor=pointer]:
+              - /url: "#contact"
+        - generic [ref=e235]:
+          - heading "تابعنا" [level=4] [ref=e236]
+          - paragraph [ref=e237]: تابعنا على وسائل التواصل الاجتماعي لأحدث المشاريع والتحديثات.
+      - paragraph [ref=e239]: © 2026 SOLIDE. جميع الحقوق محفوظة.

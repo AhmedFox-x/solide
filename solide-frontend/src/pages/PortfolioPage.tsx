@@ -24,6 +24,10 @@ function isEmbedUrl(url: string): string | null {
   return null
 }
 
+function isGlb(url: string): boolean {
+  return /\b\.glb\b/i.test(url) || url.endsWith('.glb')
+}
+
 export default function PortfolioPage() {
   const [lang, setLang] = useLang()
   const [projects, setProjects] = useState<Project[]>([])
@@ -308,9 +312,34 @@ export default function PortfolioPage() {
             </button>
 
             <motion.div key={modelViewer.url} initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
-              className="relative w-full max-w-4xl aspect-video bg-black/50 rounded overflow-hidden"
+              className="relative w-full max-w-4xl h-[80vh] bg-black/50 rounded overflow-hidden"
             >
-              {isEmbedUrl(modelViewer.url) ? (
+              {isGlb(modelViewer.url) ? (
+                <>
+                  {/* @ts-expect-error model-viewer is a custom element loaded from CDN */}
+                  <model-viewer src={assetUrl(modelViewer.url)}
+                    alt={modelViewer.title}
+                    className="w-full h-full"
+                    camera-controls
+                    auto-rotate
+                    ar
+                    ar-modes="webxr scene-viewer quick-look"
+                    style={{ pointerEvents: modelInteracted ? 'auto' : 'none', width: '100%', height: '100%' }}
+                  />
+                  {!modelInteracted && (
+                    <div onClick={() => setModelInteracted(true)}
+                      className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/40 transition-opacity hover:bg-black/20"
+                    >
+                      <div className="text-center">
+                        <Maximize2 className="w-8 h-8 mx-auto mb-3 text-gold/60" />
+                        <p className="text-sm tracking-[0.2em] uppercase text-ivory/60">
+                          {lang === 'ar' ? 'اضغط للتفاعل مع النموذج' : 'Tap to interact with model'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : isEmbedUrl(modelViewer.url) ? (
                 <>
                   <iframe src={isEmbedUrl(modelViewer.url)!}
                     title={modelViewer.title}
@@ -319,7 +348,6 @@ export default function PortfolioPage() {
                     allowFullScreen
                     style={{ pointerEvents: modelInteracted ? 'auto' : 'none' }}
                   />
-                  {/* gesture isolation overlay */}
                   {!modelInteracted && (
                     <div onClick={() => setModelInteracted(true)}
                       className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/40 transition-opacity hover:bg-black/20"

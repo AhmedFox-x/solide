@@ -13,7 +13,27 @@ The company is NOT a design agency.
 All design, content, architecture, and business decisions should reflect this reality.
 
 ---
+## UI / UX Quality Standards
 
+Every UI change must improve the overall quality of the website, never reduce it.
+
+When implementing any new feature or section:
+
+* Match the existing design system exactly.
+* Maintain consistent spacing, typography, colors, border radius, shadows, and animations.
+* New components must feel like they were designed as part of the original website.
+* Prefer elegant, premium, modern interfaces over generic layouts.
+* Avoid clutter, unnecessary elements, or visual noise.
+* Prioritize readability, accessibility, and responsive behavior.
+* Use smooth, subtle animations that enhance the experience without distracting the user.
+* Never introduce inconsistent styles or duplicate design patterns.
+* Reuse existing components whenever possible instead of creating similar alternatives.
+* Preserve the visual hierarchy and user flow of the page.
+* Optimize every change for performance and maintainability.
+* Before finalizing any UI work, verify that the new feature integrates naturally with the surrounding sections and does not negatively affect layout, responsiveness, or user experience.
+
+**Principle:** Every modification should make the website look more premium, polished, and cohesive, similar to the quality expected from world-class product websites such as Apple, Stripe, Vercel, Framer, and Linear.
+---
 ## Project Structure
 
 ```text

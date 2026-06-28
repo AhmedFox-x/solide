@@ -34,6 +34,10 @@ export interface Project {
   createdAt: string; updatedAt: string
 }
 
+export interface OrderProject {
+  id: string; title: string; images: string[]; type?: string
+}
+
 export interface Testimonial {
   id: string; name: string; title: string; content: string
   rating: number; imageUrl?: string; company?: string

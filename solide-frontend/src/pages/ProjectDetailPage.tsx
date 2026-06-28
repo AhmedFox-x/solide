@@ -205,11 +205,11 @@ export default function ProjectDetailPage() {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="mt-auto"
               >
-                <button onClick={() => navigate('/', { state: { orderProject: { id: project.id, title: project.title, images: allImages } } })}
+                <button onClick={() => navigate('/', { state: { orderProject: { id: project.id, title: project.title, images: allImages, type: project.type } } })}
                   className="w-full group inline-flex items-center justify-center gap-3 px-6 py-3.5 bg-gradient-to-br from-gold/80 to-gold text-obsidian font-sans text-sm tracking-[0.25em] uppercase transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_60px_rgba(200,150,60,0.28)]"
                   style={{ clipPath: "polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)" }}
                 >
-                  {lang === 'ar' ? 'اطلب هذا التصميم' : 'Order this design'}
+                  {lang === 'ar' ? 'تنفيذ هذا التصميم' : 'Implement this design'}
                   {lang === 'ar' ? (
                     <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
                   ) : (

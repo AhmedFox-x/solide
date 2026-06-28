@@ -6,7 +6,7 @@ import type { Lang } from '../lib/translations'
 import { useLang } from '../lib/useLang'
 import { assetUrl } from '../lib/asset'
 import { projectsApi, testimonialsApi } from '../lib/api'
-import type { Project, Testimonial } from '../lib/api'
+import type { Project, Testimonial, OrderProject } from '../lib/api'
 import HeroSection from '../components/HeroSection'
 import AboutSection from '../components/AboutSection'
 import ServicesSection from '../components/ServicesSection'
@@ -21,7 +21,7 @@ export default function HomePage() {
   const [projects, setProjects] = useState<Project[]>([])
   const location = useLocation()
   const navigate = useNavigate()
-  const orderState = location.state as { orderProject?: { id: string; title: string; images: string[] } } | null
+  const orderState = location.state as { orderProject?: OrderProject } | null
   const contactRef = useRef<HTMLDivElement>(null)
   const orderHandled = useRef(false)
 
