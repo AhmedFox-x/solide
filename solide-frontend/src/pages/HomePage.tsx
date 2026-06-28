@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import type { Lang } from '../lib/translations'
-import { translations } from '../lib/translations'
 import { assetUrl } from '../lib/asset'
 import { projectsApi, testimonialsApi } from '../lib/api'
 import type { Project, Testimonial } from '../lib/api'
@@ -19,7 +18,6 @@ export default function HomePage() {
   const [lang, setLang] = useState<Lang>('ar')
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [projects, setProjects] = useState<Project[]>([])
-  const nav = translations.navbar[lang]
   const location = useLocation()
   const navigate = useNavigate()
   const orderState = location.state as { orderProject?: { id: string; title: string; images: string[] } } | null
