@@ -9,8 +9,21 @@ import GeometricBg from '../components/GeometricBg'
 import AppNavbar from '../components/AppNavbar'
 import { useLang } from '../lib/useLang'
 import LazyImage from '../components/LazyImage'
-import { X, Maximize2 } from 'lucide-react'
+import { X, Maximize2, Cuboid } from 'lucide-react'
 import logo from '../assets/logo-bg.png'
+
+const STATIC_3D_MODELS: { file: string; title: string; desc: string }[] = [
+  { file: 'main-villa-gate.glb', title: 'بوابة فيلا رئيسية', desc: 'بوابة مزدوجة ضخمة بزخارف كريتال كلاسيكية مع شعار S مركزي وتفاصيل ذهبية.' },
+  { file: 'entrance-gate.glb', title: 'بوابة فيلا خارجية', desc: 'تصميم حديث بخطوط نظيفة وشرائح أفقية مع لمسات ذهبية.' },
+  { file: 'stair-railing-internal.glb', title: 'درابزين سلم داخلي', desc: 'درابزين حديد بمقبض خشبي وتفاصيل S-Scroll ذهبية.' },
+  { file: 'balcony-railing.glb', title: 'درابزين بلكونة', desc: 'نقشات حلزونية وزخارف نباتية متكررة بإطار ذهبي.' },
+  { file: 'external-staircase.glb', title: 'سلم خارجي', desc: 'سلم حديد بدرجات صلب وحواف ذهبية ودرابزين جانبي.' },
+  { file: 'roof-stairs.glb', title: 'سلم بدروم / روف', desc: 'تصميم صناعي بسيط بدرابزين أنبوبي مزدوج.' },
+  { file: 'window-grill.glb', title: 'شباك حماية', desc: 'شبكة كريتال مربعات مع تفصيلة ماسة ذهبية مركزية.' },
+  { file: 'fence-section.glb', title: 'سور خارجي', desc: 'سور بأعمدة حديد وأطراف رمحية ذهبية بين دعامتين.' },
+  { file: 'iron-door.glb', title: 'باب حديد خارجي', desc: 'باب ثقيل بشرائح حديد متقاطعة ومقبض حلقي ذهبي.' },
+  { file: 'custom-art-piece.glb', title: 'تصميم حر — تحفة فنية', desc: 'منحوتة حائط بحرف S الذهبي المستوحى من شعار Solide.' },
+]
 
 function parseList(v: string | null | undefined): string[] {
   if (!v) return []
@@ -72,13 +85,19 @@ export default function PortfolioPage() {
   }, [projects, typeFilter])
 
   const modelItems = useMemo(() => {
-    const result: { key: string; url: string; projectTitle: string; projectId: string }[] = []
+    const result: { key: string; url: string; title: string; desc?: string; projectId?: string }[] = []
     projects.forEach(p => {
       if (typeFilter !== 'all' && p.type !== typeFilter) return
-      parseList(p.models3d).forEach(u => result.push({ key: `${p.id}-mdl-${u}`, url: u, projectTitle: p.title, projectId: p.id }))
+      parseList(p.models3d).forEach(u => result.push({ key: `${p.id}-mdl-${u}`, url: u, title: p.title, projectId: p.id }))
     })
     return result
   }, [projects, typeFilter])
+
+  const staticModels = useMemo(() => {
+    return STATIC_3D_MODELS.map((m, i) => ({
+      key: `static-${i}`, url: `/models/glb/${m.file}`, title: m.title, desc: m.desc,
+    }))
+  }, [])
 
   const closeModelViewer = useCallback(() => {
     setModelViewer(null)
@@ -238,34 +257,28 @@ export default function PortfolioPage() {
             ) : (
               <motion.div key="models" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
-                className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
               >
-                {modelItems.map((item) => (
+                {[...staticModels, ...modelItems].map((item) => (
                   <motion.div key={item.key} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }} className="break-inside-avoid"
+                    transition={{ duration: 0.4 }}
                   >
-                    <div className="group relative overflow-hidden border border-ivory/5 hover:border-gold/15 transition-all bg-ivory/[0.015]">
-                      <button onClick={() => handleModelClick(item.url, item.projectTitle)}
-                        className="w-full group cursor-pointer">
-                        <div className="w-full flex items-center justify-center bg-ivory/[0.02] py-16">
-                          <div className="text-center">
-                            <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-ivory/10 flex items-center justify-center text-ivory/20 group-hover:text-gold/60 group-hover:border-gold/30 transition-all duration-300">
-                              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1}>
-                                <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
-                              </svg>
-                            </div>
-                            <p className="text-xs text-ivory/40 font-serif">{item.projectTitle}</p>
-                            <p className="text-[10px] text-ivory/20 mt-1 group-hover:text-gold/40 transition-colors">
-                              {lang === 'ar' ? 'اضغط لعرض النموذج' : 'Click to view 3D Model'}
+                    <div className="group relative overflow-hidden border border-ivory/5 hover:border-gold/15 transition-all bg-ivory/[0.015] h-full flex flex-col">
+                      <button onClick={() => handleModelClick(item.url, item.title)}
+                        className="w-full flex-1 cursor-pointer">
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-b from-ivory/[0.01] to-ivory/[0.03] py-20">
+                          <div className="text-center px-6">
+                            <Cuboid className="w-10 h-10 mx-auto mb-4 text-ivory/20 group-hover:text-gold/50 transition-all duration-300" />
+                            <p className="text-sm font-serif text-ivory/60 group-hover:text-gold transition-colors duration-300">{item.title}</p>
+                            {'desc' in item && (
+                              <p className="text-xs text-ivory/30 mt-2 leading-relaxed">{item.desc}</p>
+                            )}
+                            <p className="text-[10px] text-ivory/20 mt-4 tracking-wider group-hover:text-gold/40 transition-colors">
+                              {lang === 'ar' ? '👆 اضغط للعرض ثلاثي الأبعاد' : '👆 Click to view 3D Model'}
                             </p>
                           </div>
                         </div>
                       </button>
-                      <div className="p-4">
-                        <Link to={`/project/${item.projectId}`}
-                          className="text-sm font-serif text-ivory/70 hover:text-gold transition-colors"
-                        >{item.projectTitle}</Link>
-                      </div>
                     </div>
                   </motion.div>
                 ))}
@@ -277,7 +290,7 @@ export default function PortfolioPage() {
             <div className="flex justify-center items-center mt-24">
               <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
             </div>
-          ) : filter === 'projects' && cards.length === 0 || filter === 'individual' && individualItems.length === 0 || filter === 'models3d' && modelItems.length === 0 ? (
+          ) : filter === 'projects' && cards.length === 0 || filter === 'individual' && individualItems.length === 0 || filter === 'models3d' && modelItems.length === 0 && staticModels.length === 0 ? (
             <p className="text-center text-ivory/20 text-sm mt-16">
               {lang === 'en' ? 'No projects yet.' : 'لا توجد مشاريع بعد.'}
             </p>
