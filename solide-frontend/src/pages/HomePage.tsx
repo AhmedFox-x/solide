@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import type { Lang } from '../lib/translations'
+import { useLang } from '../lib/useLang'
 import { assetUrl } from '../lib/asset'
 import { projectsApi, testimonialsApi } from '../lib/api'
 import type { Project, Testimonial } from '../lib/api'
@@ -15,7 +16,7 @@ import AppNavbar from '../components/AppNavbar'
 import logo from '../assets/logo-bg.png'
 
 export default function HomePage() {
-  const [lang, setLang] = useState<Lang>('ar')
+  const [lang, setLang] = useLang()
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [projects, setProjects] = useState<Project[]>([])
   const location = useLocation()
@@ -33,18 +34,20 @@ export default function HomePage() {
     if (orderState?.orderProject && !orderHandled.current) {
       orderHandled.current = true
       navigate('.', { replace: true, state: {} })
-      const tryScroll = () => {
-        const el = document.getElementById('contact-form')
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        } else {
-          if (contactRef.current) contactRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
+      const el = document.getElementById('contact-form') || contactRef.current
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        return
       }
-      const wait = (n: number) => { if (n < 15) { setTimeout(() => { tryScroll(); wait(n + 1) }, 300) } }
-      setTimeout(tryScroll, 100)
-      setTimeout(tryScroll, 500)
-      setTimeout(tryScroll, 1000)
+      const observer = new MutationObserver(() => {
+        const target = document.getElementById('contact-form') || contactRef.current
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          observer.disconnect()
+        }
+      })
+      observer.observe(document.body, { childList: true, subtree: true })
+      return () => observer.disconnect()
     }
   }, [orderState, navigate])
 

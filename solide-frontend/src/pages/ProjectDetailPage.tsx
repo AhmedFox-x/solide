@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import type { Lang } from '../lib/translations'
 import { assetUrl } from '../lib/asset'
 import { projectsApi } from '../lib/api'
 import type { Project } from '../lib/api'
 import GeometricBg from '../components/GeometricBg'
 import AppNavbar from '../components/AppNavbar'
+import { useLang } from '../lib/useLang'
 import ImageMagnifier from '../components/ImageMagnifier'
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Grid3X3 } from 'lucide-react'
 import logo from '../assets/logo-bg.png'
@@ -20,7 +20,7 @@ function parseList(v: string | null | undefined): string[] {
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [lang, setLang] = useState<Lang>('ar')
+  const [lang, setLang] = useLang()
   const [project, setProject] = useState<Project | null>(null)
   const [allProjects, setAllProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)

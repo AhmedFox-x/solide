@@ -14,21 +14,24 @@ export default function AboutSection({ lang }: Props) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const reveal = useTransform(scrollYProgress, [0, 0.25], [0, 1]);
-
+  const bgScale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1.2]);
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.5], [0.3, 0.6]);
+  const headingX = useTransform(reveal, [0, 1], [-30, 0]);
+  const contentY = useTransform(reveal, [0, 1], [40, 0]);
   const stagger = 0.1;
 
   return (
     <section id="about" ref={ref} className="relative py-28 md:py-36 px-4 overflow-hidden">
       {/* background accent */}
       <motion.div
-        style={{ scale: useTransform(scrollYProgress, [0, 0.5], [0.8, 1.2]), opacity: useTransform(scrollYProgress, [0, 0.5], [0.3, 0.6]) }}
+        style={{ scale: bgScale, opacity: bgOpacity }}
         className="absolute -top-40 -right-40 w-80 h-80 border border-gold/10 rounded-full"
       />
 
       <div className="max-w-6xl mx-auto relative">
         {/* heading — left aligned, bold */}
         <motion.div
-          style={{ opacity: reveal, x: useTransform(reveal, [0, 1], [-30, 0]) }}
+          style={{ opacity: reveal, x: headingX }}
           className="mb-16"
         >
           <span className="text-gold/60 text-xs tracking-[0.3em] uppercase">
@@ -45,7 +48,7 @@ export default function AboutSection({ lang }: Props) {
         <div className="grid md:grid-cols-5 gap-8 md:gap-12 mb-20">
           {/* big stat */}
           <motion.div
-            style={{ opacity: reveal, y: useTransform(reveal, [0, 1], [40, 0]) }}
+            style={{ opacity: reveal, y: contentY }}
             className="md:col-span-2"
           >
             <div className="text-7xl md:text-8xl lg:text-9xl font-display text-gold/20 leading-none">
@@ -58,7 +61,7 @@ export default function AboutSection({ lang }: Props) {
 
           {/* text pair */}
           <motion.div
-            style={{ opacity: reveal, y: useTransform(reveal, [0, 1], [40, 0]) }}
+            style={{ opacity: reveal, y: contentY }}
             className="md:col-span-3 space-y-6"
           >
             <p className="text-ivory/70 text-lg leading-relaxed font-serif">

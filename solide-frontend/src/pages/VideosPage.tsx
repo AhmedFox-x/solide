@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { Lang } from '../lib/translations'
 import { translations } from '../lib/translations'
 import { assetUrl } from '../lib/asset'
 import { projectsApi } from '../lib/api'
 import type { Project } from '../lib/api'
 import GeometricBg from '../components/GeometricBg'
 import AppNavbar from '../components/AppNavbar'
+import { useLang } from '../lib/useLang'
 import logo from '../assets/logo-bg.png'
 
 function parseList(v: string | null | undefined): string[] {
@@ -33,7 +33,7 @@ function getYouTubeId(url: string) {
 }
 
 export default function VideosPage() {
-  const [lang, setLang] = useState<Lang>('ar')
+  const [lang, setLang] = useLang()
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const t = translations.videos[lang]
@@ -84,12 +84,12 @@ export default function VideosPage() {
                 typeFilter === 'all' ? 'bg-ivory/10 text-ivory' : 'text-ivory/30 border border-ivory/10 hover:border-ivory/30'
               }`}
             >{t.filterTypeAll}</button>
-            {projectTypes.map(t => (
-              <button key={t} onClick={() => setTypeFilter(t)}
+            {projectTypes.map(typeName => (
+              <button key={typeName} onClick={() => setTypeFilter(typeName)}
                 className={`px-3 py-1 text-[11px] tracking-wider transition-all ${
-                  typeFilter === t ? 'bg-ivory/10 text-ivory' : 'text-ivory/30 border border-ivory/10 hover:border-ivory/30'
+                  typeFilter === typeName ? 'bg-ivory/10 text-ivory' : 'text-ivory/30 border border-ivory/10 hover:border-ivory/30'
                 }`}
-              >{t}</button>
+              >{typeName}</button>
             ))}
           </div>
 
