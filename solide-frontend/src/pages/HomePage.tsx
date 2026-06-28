@@ -24,7 +24,7 @@ export default function HomePage() {
   const navigate = useNavigate()
   const orderState = location.state as { orderProject?: { id: string; title: string; images: string[] } } | null
   const contactRef = useRef<HTMLDivElement>(null)
-  const scrolled = useRef(false)
+  const orderHandled = useRef(false)
 
   useEffect(() => {
     testimonialsApi.list().then(r => setTestimonials(r.testimonials)).catch(() => {})
@@ -32,19 +32,22 @@ export default function HomePage() {
   }, [])
 
   useEffect(() => {
-    if (!orderState?.orderProject || scrolled.current) return
-    scrolled.current = true
-
-    navigate('.', { replace: true, state: {} })
-
-    const tryScroll = (retries = 0) => {
-      if (!contactRef.current) {
-        if (retries < 10) requestAnimationFrame(() => tryScroll(retries + 1))
-        return
+    if (orderState?.orderProject && !orderHandled.current) {
+      orderHandled.current = true
+      navigate('.', { replace: true, state: {} })
+      const tryScroll = () => {
+        const el = document.getElementById('contact-form')
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else {
+          if (contactRef.current) contactRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
       }
-      contactRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const wait = (n: number) => { if (n < 15) { setTimeout(() => { tryScroll(); wait(n + 1) }, 300) } }
+      setTimeout(tryScroll, 100)
+      setTimeout(tryScroll, 500)
+      setTimeout(tryScroll, 1000)
     }
-    requestAnimationFrame(() => tryScroll())
   }, [orderState, navigate])
 
   const featured = projects.filter(p => p.featured).slice(0, 3)
@@ -74,7 +77,7 @@ export default function HomePage() {
                 className="mb-12"
               >
                 <span className="text-[10px] tracking-[0.3em] uppercase text-gold/40 block mb-2">
-                  {lang === 'en' ? '— Featured Works' : '— أعمال مميزة'}
+                  {lang === 'en' ? '— Featured Works —' : '— أعمال مميزة —'}
                 </span>
                 <h2 className="text-3xl md:text-4xl font-display text-ivory">
                   {lang === 'en' ? 'Our latest projects' : 'أحدث مشاريعنا'}

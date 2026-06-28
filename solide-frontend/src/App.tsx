@@ -60,7 +60,6 @@ function AnimatedRoutes() {
 }
 
 export default function App() {
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
   return (
     <HashRouter>
       <Toaster position="top-center" toastOptions={{
