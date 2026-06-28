@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import type { Lang } from '../lib/translations'
 import { assetUrl } from '../lib/asset'
 import { projectsApi } from '../lib/api'
@@ -8,7 +8,7 @@ import type { Project } from '../lib/api'
 import GeometricBg from '../components/GeometricBg'
 import AppNavbar from '../components/AppNavbar'
 import ImageMagnifier from '../components/ImageMagnifier'
-import { ArrowLeft, ArrowRight, X, ChevronLeft, ChevronRight, Grid3X3 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Grid3X3 } from 'lucide-react'
 import logo from '../assets/logo-bg.png'
 
 function parseList(v: string | null | undefined): string[] {
@@ -25,7 +25,6 @@ export default function ProjectDetailPage() {
   const [allProjects, setAllProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedIdx, setSelectedIdx] = useState(0)
-  const [lightboxOpen, setLightboxOpen] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -137,8 +136,7 @@ export default function ProjectDetailPage() {
                   alt={project.title}
                   zoom={2.5}
                   lensSize={140}
-                  onClick={() => setLightboxOpen(true)}
-                  className="w-full h-full bg-ivory/[0.02] cursor-zoom-in"
+                  className="w-full h-full bg-ivory/[0.02]"
                   lang={lang}
                 />
               ) : (
@@ -263,55 +261,6 @@ export default function ProjectDetailPage() {
           </motion.div>
         </div>
       </main>
-
-      {/* lightbox */}
-      <AnimatePresence>
-        {lightboxOpen && allImages[selectedIdx] && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-obsidian/98 flex items-center justify-center"
-          >
-            <button onClick={() => setLightboxOpen(false)}
-              className="absolute top-6 right-6 z-10 p-2 text-ivory/40 hover:text-ivory transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            <button onClick={goPrev} disabled={currentIdx <= 0}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 text-ivory/40 hover:text-ivory disabled:opacity-20 disabled:cursor-not-allowed transition-all"
-            >
-              <ChevronLeft className="w-8 h-8" />
-            </button>
-
-            <button onClick={goNext} disabled={currentIdx >= allProjects.length - 1}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 text-ivory/40 hover:text-ivory disabled:opacity-20 disabled:cursor-not-allowed transition-all"
-            >
-              <ChevronRight className="w-8 h-8" />
-            </button>
-
-            <motion.img
-              key={selectedIdx}
-              initial={{ scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.92, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              src={assetUrl(allImages[selectedIdx])}
-              alt={project.title}
-              className="max-w-[92vw] max-h-[90vh] object-contain"
-              onClick={(e) => {
-                if (e.target === e.currentTarget) setLightboxOpen(false)
-              }}
-            />
-
-            {/* counter */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-obsidian/60 backdrop-blur px-4 py-1.5 text-xs text-ivory/50 tracking-wider">
-              {selectedIdx + 1} / {allImages.length}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <footer className="py-10 px-4 border-t border-ivory/5">
         <div className="max-w-6xl mx-auto text-center">
