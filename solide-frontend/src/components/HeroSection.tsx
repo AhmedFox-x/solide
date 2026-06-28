@@ -39,11 +39,17 @@ export default function HeroSection({ lang, setLang }: Props) {
           className="absolute inset-0 w-full h-full object-cover"
           style={{ objectPosition: "50% 30%" }}
           loop
+          onTimeUpdate={(e) => {
+            const v = e.currentTarget;
+            if (v.duration > 1 && v.duration - v.currentTime < 0.05) {
+              v.currentTime = 0.05;
+            }
+          }}
         >
           <source src={videoSrc} type="video/mp4" />
         </video>
         {/* dark overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-obsidian/80 via-obsidian/60 to-obsidian/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-obsidian/65 via-obsidian/45 to-obsidian/75" />
       </div>
 
       {/* large watermark logo */}
@@ -64,7 +70,7 @@ export default function HeroSection({ lang, setLang }: Props) {
 
       {/* grid overlay */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        className="absolute inset-0 pointer-events-none opacity-[0.024]"
         style={{
           backgroundImage:
             "linear-gradient(#C8963C 1px, transparent 1px), linear-gradient(90deg, #C8963C 1px, transparent 1px)",
@@ -103,7 +109,7 @@ export default function HeroSection({ lang, setLang }: Props) {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
           className="mb-8"
         >
           <span className="inline-flex items-center gap-2 px-4 py-1.5 border border-gold/15 text-gold/50 text-[10px] tracking-[0.3em] uppercase font-sans">
@@ -117,7 +123,7 @@ export default function HeroSection({ lang, setLang }: Props) {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.35 }}
+          transition={{ duration: 0.6, delay: 0.25 }}
           className="mb-6"
         >
           <span className="inline-block px-5 py-2 border border-gold/20 text-gold text-xs tracking-[0.25em] uppercase">
@@ -130,8 +136,8 @@ export default function HeroSection({ lang, setLang }: Props) {
           key={`heading-${lang}`}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="text-6xl sm:text-8xl md:text-9xl lg:text-[140px] font-display leading-[0.82] mb-8"
+          transition={{ duration: 0.8, delay: 0.35 }}
+          className="text-5xl sm:text-7xl md:text-8xl lg:text-[120px] font-display leading-[0.82] mb-8"
         >
           <span className="text-gold-gradient">
             {lang === "en" ? "Solide" : "سوليد"}
@@ -143,7 +149,7 @@ export default function HeroSection({ lang, setLang }: Props) {
           key={`ar-tag-${lang}`}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
+          transition={{ duration: 0.6, delay: 0.45 }}
           className="text-ivory/50 text-xl md:text-3xl font-sans mb-14 leading-relaxed"
           style={{ direction: "rtl" }}
         >
@@ -154,26 +160,28 @@ export default function HeroSection({ lang, setLang }: Props) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.9 }}
+          transition={{ duration: 0.6, delay: 0.55 }}
           className="flex flex-wrap justify-center gap-5"
         >
           <Link
             to="/portfolio"
-            className="group relative px-10 py-4 overflow-hidden border border-gold text-gold hover:text-obsidian transition-all duration-500 text-sm tracking-[0.15em] uppercase"
+            className="group relative px-10 py-4 overflow-hidden border border-gold text-gold hover:text-obsidian hover:-translate-y-0.5 transition-all duration-250 text-sm tracking-[0.15em] uppercase"
           >
             <span className="relative z-10 inline-flex items-center gap-2">
               {lang === "en" ? "View Our Work" : "شاهد أعمالنا"}
             </span>
-            <span className="absolute inset-0 bg-gold translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+            <span className="absolute inset-0 bg-gold translate-y-full group-hover:translate-y-0 transition-transform duration-250" />
+            <span className="absolute inset-0 rounded shadow-[0_0_20px_2px_rgba(200,150,60,0.4)] opacity-0 group-hover:opacity-100 transition-opacity duration-250" />
           </Link>
           <a
             href="#contact"
-            className="group relative px-10 py-4 overflow-hidden bg-gold text-obsidian text-sm tracking-[0.15em] uppercase font-semibold"
+            className="group relative px-10 py-4 overflow-hidden bg-gold text-obsidian hover:-translate-y-0.5 transition-all duration-250 text-sm tracking-[0.15em] uppercase font-semibold"
           >
             <span className="relative z-10 inline-flex items-center gap-2">
               {lang === "en" ? "Start a Project" : "ابدأ مشروعاً"}
             </span>
-            <span className="absolute inset-0 bg-ivory/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+            <span className="absolute inset-0 bg-ivory/20 translate-y-full group-hover:translate-y-0 transition-transform duration-250" />
+            <span className="absolute inset-0 rounded shadow-[0_0_25px_2px_rgba(200,150,60,0.5)] opacity-0 group-hover:opacity-100 transition-opacity duration-250" />
           </a>
         </motion.div>
       </motion.div>
