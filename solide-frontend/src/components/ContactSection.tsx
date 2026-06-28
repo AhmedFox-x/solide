@@ -29,7 +29,7 @@ export default function ContactSection({ lang, orderProject }: Props) {
   const projectTypes = [...baseTypes, lang === 'en' ? 'Other' : 'أخرى'];
   const [step, setStep] = useState(orderProject ? 1 : 0);
   const [dir, setDir] = useState(1);
-  const [selectedType, setSelectedType] = useState(orderProject?.type || "");
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(orderProject?.type ? [orderProject.type] : []);
   interface DimItem { id: number; name: string; length: string; width: string; height: string; unit: string }
   const [dimItems, setDimItems] = useState<DimItem[]>([{ id: 1, name: "", length: "", width: "", height: "", unit: "m" }]);
   const dimIdRef = useRef(1);
@@ -58,8 +58,8 @@ export default function ContactSection({ lang, orderProject }: Props) {
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
-    if (!orderProject && step === 0 && !selectedType) {
-      errs.type = lang === "en" ? "Please select a project type" : "اختر نوع العمل";
+    if (!orderProject && step === 0 && selectedTypes.length === 0) {
+      errs.type = lang === "en" ? "Please select at least one project type" : "اختر نوع عمل واحد على الأقل";
     }
     if (step === (orderProject ? 1 : 2)) {
       if (!name.trim()) errs.name = lang === "en" ? "Name is required" : "الاسم مطلوب";
@@ -94,7 +94,7 @@ export default function ContactSection({ lang, orderProject }: Props) {
           orderProject.images.forEach(img => msgParts.push(img));
         }
       } else {
-        msgParts.push(`${lang === 'en' ? 'Type' : 'نوع العمل'}: ${selectedType}`);
+        msgParts.push(`${lang === 'en' ? 'Types' : 'أنواع العمل'}: ${selectedTypes.join(' + ')}`);
       }
       const filledItems = dimItems.filter(i => i.name || i.length || i.width || i.height)
       if (filledItems.length > 0) {
@@ -270,17 +270,23 @@ export default function ContactSection({ lang, orderProject }: Props) {
                   {/* Step 0: Project type (only when NOT ordering from project) */}
                   {step === 0 && !orderProject && (
                     <div className="grid grid-cols-2 gap-3">
-                      {projectTypes.map(ty => (
-                        <button key={ty} type="button" onClick={() => { setSelectedType(ty); setErrors({}) }}
-                          className={`p-4 text-xs tracking-wider border transition-all duration-200 ${
-                            selectedType === ty
-                              ? 'border-gold/60 bg-gold/10 text-gold'
-                              : 'border-ivory/10 text-ivory/50 hover:border-ivory/30 hover:text-ivory/70'
-                          }`}
-                        >
-                          {ty}
-                        </button>
-                      ))}
+                      {projectTypes.map(ty => {
+                        const active = selectedTypes.includes(ty)
+                        return (
+                          <button key={ty} type="button" onClick={() => {
+                            setSelectedTypes(prev => active ? prev.filter(t => t !== ty) : [...prev, ty])
+                            setErrors({})
+                          }}
+                            className={`p-4 text-xs tracking-wider border transition-all duration-200 ${
+                              active
+                                ? 'border-gold/60 bg-gold/10 text-gold'
+                                : 'border-ivory/10 text-ivory/50 hover:border-ivory/30 hover:text-ivory/70'
+                            }`}
+                          >
+                            {ty}
+                          </button>
+                        )
+                      })}
                     </div>
                   )}
 
