@@ -94,8 +94,9 @@ export default function PortfolioPage() {
   }, [projects, typeFilter])
 
   const staticModels = useMemo(() => {
+    const base = import.meta.env.BASE_URL || '/'
     return STATIC_3D_MODELS.map((m, i) => ({
-      key: `static-${i}`, url: `/models/glb/${m.file}`, title: m.title, desc: m.desc,
+      key: `static-${i}`, url: `${base}models/glb/${m.file}`, title: m.title, desc: m.desc,
     }))
   }, [])
 
@@ -330,7 +331,7 @@ export default function PortfolioPage() {
               {isGlb(modelViewer.url) ? (
                 <>
                   {/* @ts-expect-error model-viewer is a custom element loaded from CDN */}
-                  <model-viewer src={modelViewer.url.startsWith('/models/glb/') ? modelViewer.url : assetUrl(modelViewer.url)}
+                  <model-viewer src={modelViewer.url.includes('/models/glb/') ? modelViewer.url : assetUrl(modelViewer.url)}
                     alt={modelViewer.title}
                     className="w-full h-full"
                     camera-controls
