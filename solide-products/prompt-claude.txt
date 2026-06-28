@@ -1,0 +1,86 @@
+أنت خبير تصميم ثلاثي الأبعاد متخصص في المشغولات المعدنية والحديد الكريتال (Wrought Iron). 
+مطلوب منك تصميم 10 نماذج ثلاثية الأبعاد واقعية عالية الجودة بصيغة .glb لمنتجات شركة SOLIDE لتشغيل المعادن.
+
+--- دليل العمل ---
+
+المشروع: شركة SOLIDE — تشكيل المعادن والحديد الكريتال
+الجمهور المستهدف: عملاء مصريون وعرب يبحثون عن بوابات فيلات، درابزين، سلالم، شبابيك حماية
+نوع الملفات المطلوب: .glb (GLTF Binary) — متوافقة مع <model-viewer> (camera-controls, auto-rotate, AR)
+مقياس الوحدة: 1 meter = 1 unit في Blender/Three.js
+اتجاه المحاور: +Y up, -Z forward
+
+--- المنتجات المطلوبة ---
+
+1. بوابة فيلا رئيسية (Main Villa Gate) — مصر面前 مزدوج ضخم بزخارف حديد كريتال كلاسيكية (لون أسود مطفي أو بني غامق)
+2. بوابة فيلا خارجية (Villa Entrance Gate) — بوابة مفردة أو مزدوجة بتصميم حديث، خطوط نظيفة
+3. درابزين سلم داخلي (Internal Stair Railing) — درابزين حديد مع درابزين خشب أو زجاج، سلطانة وبدايات ونهايات
+4. درابزين بلكونة (Balcony Railing) — درابزين بلكونة بتفاصيل حلزونية أو زخارف نباتية
+5. سلم خارجي (External Staircase) — سلم حديد خارجي مع درجات ودرابزين (تصميم صناعي أو كلاسيك)
+6. درابزين بدروم (Rooftop/Roof Stairs) — سلم بدروم أو روف بسيط وقوي
+7. شباك حماية (Window Grill) — شباك حماية كريتال مربعات أو مستطيلات مع تفصيلة وسط
+8. سور خارجي (Fence/Pergola) — جزء من سور خارجي مع زخارف وبوابة صغيرة
+9. باب حديد خارجي (External Iron Door) — باب مفرد ثقيل بتفاصيل بارزة من الحديد المطاوع
+10. تصميم حر (Bonus: Custom Design) — قطعة حديدية زخرفية فنية (تحفة) تظهر براعة المشغولات اليدوية
+
+--- مواصفات الجودة ---
+
+- Realistic PBR materials: استخدام مواد PBR (حديد معتم مع Roughness من 0.3-0.6, Metalness 0.8-1.0)
+- إضاءة مدمجة: أضف إضاءة محيطة (environment map) بسيطة داخل الملف لو أمكن
+- تفاصيل: مسامير، براغي، لحامات بسيطة، حواف مشطوفة عشان يطلع واقعي
+- إطارات: كل تصميم له إطار أو قاعدة عشان يتبث في الحائط أو الأرضية
+- تحسين (Optimization): كل ملف لا يتجاوز 5MB، polygon count معقول (500-5000 face)
+- التريمنج: استخدم UV unwrap و texture baking لو استخدمت تيكستشرز (يفضل لون خام من غير تيكستشر عشان الملف يبقى خفيف)
+- اتجاه: كل المنتجات واقفة في وضع vertical (Y up)
+
+--- تعليمات التنفيذ ---
+
+1. استخدم مكتبة three.js (نسخة >= 152) مع three-stdlib عشان الـ export
+2. اكتب سكريبت Node.js واحد اسمه `generate-models.mjs` في مجلد `solide-products/`
+3. كل تصميم يكون في function منفصلة
+4. استخدم THREE.BoxGeometry, THREE.CylinderGeometry, THREE.TorusGeometry, THREE.ShapeGeometry, THREE.ExtrudeGeometry
+5. استخدم مش مجسمات معقدة — ركز على الشكل العام والتفاصيل المميزة للكريتال
+6. التصدير: استخدم GLTFExporter من three-stdlib مع binary=true
+7. كل ملف يطلع في: `solide-frontend/public/models/glb/{product-name}.glb`
+8. شغل السكريبت عن طريق: `cd solide-products && node generate-models.mjs`
+9. السكريبت يطبع رسالة نجاح لكل ملف ويقول حجمه
+
+--- مثال هيكل الملف ---
+
+// generate-models.mjs
+import * as THREE from 'three';
+import { GLTFExporter } from 'three-stdlib';
+import fs from 'fs';
+
+const OUTPUT = '../solide-frontend/public/models/glb';
+
+function createMainGate() {
+  const group = new THREE.Group();
+  // ... هان تبني المجسم
+  return group;
+}
+
+// ... باقي التصميمات
+
+[createMainGate, createEntranceGate, ...].forEach((fn, i) => {
+  const scene = new THREE.Scene();
+  const group = fn();
+  scene.add(group);
+  // إضاءة
+  // تصدير
+});
+
+--- الأدوات المطلوبة ---
+
+- npm install three three-stdlib
+- Node.js >= 18
+
+--- تأكد من ---
+
+- كل الـ .glb ملفات تفتح في المتصفح بـ <model-viewer>
+- كل تصميم يلف تلقائيا (auto-rotate) حلو
+- المواد حديد مع تشطيب غير لامع (Satin/Matt) مش لامع (Glossy)
+- اللون العام أسود مطفي (أو بني داكن) عشان يظهر تفاصيل الحديد
+- المقاسات واقعية ومنطقية (بوابة 2.4m × 3m مثلا)
+
+انتا عارف الشركة وعارف شغلها عشان انتا كنت شغال معايا قبل كده.
+يallah ورينا شطارتك.

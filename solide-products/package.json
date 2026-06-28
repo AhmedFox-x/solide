@@ -1,0 +1,14 @@
+{
+  "name": "solide-3d-generator",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "3D model generator for Solide metal works - generates .glb files",
+  "scripts": {
+    "generate": "node generate-models.mjs",
+    "generate:watch": "node generate-models.mjs && echo 'Done!'"
+  },
+  "dependencies": {
+    "three": "^0.170.0",
+    "three-stdlib": "^2.36.1"
+  }
+}

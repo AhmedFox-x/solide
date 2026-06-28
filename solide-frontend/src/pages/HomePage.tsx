@@ -13,6 +13,7 @@ import ServicesSection from '../components/ServicesSection'
 import TestimonialsSection from '../components/TestimonialsSection'
 import ContactSection from '../components/ContactSection'
 import AppNavbar from '../components/AppNavbar'
+import Footer from '../components/Footer'
 import logo from '../assets/logo-bg.png'
 
 export default function HomePage() {
@@ -195,54 +196,7 @@ export default function HomePage() {
         </div>
       </main>
 
-      <footer className="relative z-[1] pt-20 pb-10 px-4 border-t border-ivory/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid sm:grid-cols-3 gap-10 mb-12 text-center sm:text-left">
-            <div>
-              <span className="font-display text-xl tracking-[0.25em] text-ivory">SOLIDE</span>
-              <p className="text-xs text-ivory/30 mt-3 leading-relaxed max-w-xs mx-auto sm:mx-0">
-                {lang === 'en'
-                  ? 'Premium metal craftsmanship — wrought iron art defined by design.'
-                  : 'صناعة معدنية فاخرة — فن الحديد الكريتال، محدّد بالتصميم.'}
-              </p>
-            </div>
-            <div>
-              <h4 className="text-[10px] tracking-[0.2em] uppercase text-gold/50 mb-4">
-                {lang === 'en' ? 'Quick Links' : 'روابط سريعة'}
-              </h4>
-              <div className="space-y-2">
-                <Link to="/" className="block text-xs text-ivory/30 hover:text-gold/60 transition-colors">
-                  {lang === 'en' ? 'Home' : 'الرئيسية'}
-                </Link>
-                <Link to="/portfolio" className="block text-xs text-ivory/30 hover:text-gold/60 transition-colors">
-                  {lang === 'en' ? 'Portfolio' : 'أعمالنا'}
-                </Link>
-                <Link to="/videos" className="block text-xs text-ivory/30 hover:text-gold/60 transition-colors">
-                  {lang === 'en' ? 'Videos' : 'فيديو'}
-                </Link>
-                <a href="#contact" className="block text-xs text-ivory/30 hover:text-gold/60 transition-colors">
-                  {lang === 'en' ? 'Contact' : 'اتصل بنا'}
-                </a>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-[10px] tracking-[0.2em] uppercase text-gold/50 mb-4">
-                {lang === 'en' ? 'Connect' : 'تابعنا'}
-              </h4>
-              <p className="text-xs text-ivory/20 leading-relaxed">
-                {lang === 'en'
-                  ? 'Follow us on social media for the latest projects and updates.'
-                  : 'تابعنا على وسائل التواصل الاجتماعي لأحدث المشاريع والتحديثات.'}
-              </p>
-            </div>
-          </div>
-          <div className="pt-8 border-t border-ivory/5 text-center">
-            <p className="text-[10px] text-ivory/15 tracking-wider">
-              &copy; {new Date().getFullYear()} SOLIDE. {lang === 'en' ? 'All rights reserved.' : 'جميع الحقوق محفوظة.'}
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer lang={lang} />
     </div>
   )
 }
