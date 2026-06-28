@@ -50,8 +50,8 @@ export const translations = {
     },
   },
   portfolio: {
-    en: { heading: "Our Work", filterAll: "All", filterImages: "Photos", filterModels: "3D Models", filterTypeAll: "All Types" },
-    ar: { heading: "أعمالنا", filterAll: "الكل", filterImages: "صور", filterModels: "نماذج ثلاثية الأبعاد", filterTypeAll: "جميع الأنواع" },
+    en: { heading: "Our Work", filterProjects: "Projects", filterIndividual: "Standalone", filterModels: "3D Models", filterTypeAll: "All Types" },
+    ar: { heading: "أعمالنا", filterProjects: "المشاريع", filterIndividual: "صور فردية", filterModels: "نماذج ثلاثية الأبعاد", filterTypeAll: "جميع الأنواع" },
   },
   videos: {
     en: { heading: "In Motion", subtitle: "See our fabrication process and finished projects.", filterTypeAll: "All Types" },

@@ -131,6 +131,61 @@ export default function HomePage() {
           </section>
         )}
 
+        {/* individual gallery strip */}
+        {projects.length > 0 && (
+          <section className="py-20 md:py-28 px-4 overflow-hidden">
+            <div className="max-w-6xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="mb-10"
+              >
+                <span className="text-[10px] tracking-[0.3em] uppercase text-gold/40 block mb-2">
+                  {lang === 'en' ? '— Gallery —' : '— معرض —'}
+                </span>
+                <h2 className="text-3xl md:text-4xl font-display text-ivory">
+                  {lang === 'en' ? 'Standalone Designs' : 'تصاميم فردية'}
+                </h2>
+              </motion.div>
+              <div className="overflow-x-auto scrollbar-none -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                <div className="flex gap-4 w-max pb-2">
+                  {(() => {
+                    const allImgs: { url: string; title: string; id: string }[] = []
+                    projects.forEach(p => {
+                      try {
+                        const imgs = JSON.parse(p.images || '[]')
+                        if (Array.isArray(imgs)) {
+                          imgs.forEach((u: string) => {
+                            if (allImgs.length < 20) allImgs.push({ url: u, title: p.title, id: p.id })
+                          })
+                        }
+                      } catch {}
+                    })
+                    return allImgs
+                  })().map((item, i) => (
+                    <Link key={`${item.id}-${i}`} to={`/project/${item.id}`}
+                      className="group flex-shrink-0 w-[180px] md:w-[220px] overflow-hidden border border-ivory/5 hover:border-gold/15 transition-all"
+                    >
+                      <div className="aspect-[3/4] overflow-hidden">
+                        <img src={assetUrl(item.url)} alt={item.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          loading="lazy" />
+                      </div>
+                      <div className="p-3">
+                        <p className="text-[11px] text-ivory/50 group-hover:text-gold transition-colors truncate">
+                          {item.title}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         <VideosSection lang={lang} />
 
         <TestimonialsSection lang={lang} testimonials={testimonials} />

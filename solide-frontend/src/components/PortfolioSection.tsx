@@ -11,7 +11,7 @@ interface Props {
   projects: Project[];
 }
 
-type Filter = "all" | "images" | "models3d";
+type Filter = "projects" | "individual" | "models3d";
 
 function parseJSONList(v: string | null | undefined): string[] {
   if (!v) return [];
@@ -25,34 +25,32 @@ function parseJSONList(v: string | null | undefined): string[] {
 
 export default function PortfolioSection({ lang, projects }: Props) {
   const t = translations.portfolio[lang];
-  const [filter, setFilter] = useState<Filter>("all");
+  const [filter, setFilter] = useState<Filter>("projects");
   const [lightbox, setLightbox] = useState<string | null>(null);
 
   const filters: { key: Filter; label: string }[] = [
-    { key: "all", label: t.filterAll },
-    { key: "images", label: t.filterImages },
+    { key: "projects", label: t.filterProjects },
+    { key: "individual", label: t.filterIndividual },
     { key: "models3d", label: t.filterModels },
   ];
 
   const items = useMemo(() => {
-    interface Item { type: "images" | "models3d"; url: string; projectTitle: string; project: Project }
+    interface Item { type: "individual" | "models3d"; url: string; projectTitle: string; project: Project }
     const result: Item[] = [];
     projects.forEach((p) => {
       const images = parseJSONList(p.images);
       const models = parseJSONList(p.models3d);
-      if (filter === "all" || filter === "images") {
+      if (filter === "projects" || filter === "individual") {
         if (images.length > 0) {
-          images.forEach((url) => result.push({ type: "images", url, projectTitle: p.title, project: p }));
-        } else if (filter === "all") {
-          // no images, still show as placeholder
-          result.push({ type: "images", url: "", projectTitle: p.title, project: p });
+          images.forEach((url) => result.push({ type: "individual", url, projectTitle: p.title, project: p }));
+        } else if (filter === "projects") {
+          result.push({ type: "individual", url: "", projectTitle: p.title, project: p });
         }
       }
-      if (filter === "all" || filter === "models3d") {
+      if (filter === "projects" || filter === "models3d") {
         if (models.length > 0) {
           models.forEach((url) => result.push({ type: "models3d", url, projectTitle: p.title, project: p }));
-        } else if (filter === "all") {
-          // no models, still show as placeholder (only if we didn't already add a placeholder above)
+        } else if (filter === "projects") {
           if (images.length === 0) {
             result.push({ type: "models3d" as const, url: "", projectTitle: p.title, project: p });
           }
@@ -123,7 +121,7 @@ export default function PortfolioSection({ lang, projects }: Props) {
                     <div className="absolute inset-0 bg-gradient-to-t from-obsidian/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                       <span className="text-xs text-ivory/70 tracking-[0.1em] uppercase">
-                        {item.type === "models3d" ? "3D Model" : "Photo"} — {item.projectTitle}
+                        {item.type === "models3d" ? "3D Model" : "Standalone"} — {item.projectTitle}
                       </span>
                     </div>
                     <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500">

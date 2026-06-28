@@ -29,7 +29,7 @@ export default function PortfolioPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const t = translations.portfolio[lang]
-  const [filter, setFilter] = useState<'all' | 'images' | 'models3d'>('all')
+  const [filter, setFilter] = useState<'projects' | 'individual' | 'models3d'>('projects')
   const [typeFilter, setTypeFilter] = useState<string>('all')
   const [lightbox, setLightbox] = useState<string | null>(null)
   const [modelViewer, setModelViewer] = useState<{ url: string; title: string } | null>(null)
@@ -42,35 +42,39 @@ export default function PortfolioPage() {
   }, [])
 
   const filters = [
-    { key: 'all' as const, label: t.filterAll },
-    { key: 'images' as const, label: t.filterImages },
+    { key: 'projects' as const, label: t.filterProjects },
+    { key: 'individual' as const, label: t.filterIndividual },
     { key: 'models3d' as const, label: t.filterModels },
   ]
 
   const cards = useMemo(() => {
     return projects.filter(p => typeFilter === 'all' || p.type === typeFilter)
-      .filter(p => filter === 'all' ? (parseList(p.images).length > 0 || parseList(p.models3d).length > 0 || !!p.beforeImage) : true)
+      .filter(p => parseList(p.images).length > 0 || parseList(p.models3d).length > 0 || !!p.beforeImage)
       .map(p => ({
         id: p.id, title: p.title, category: p.category, type: p.type,
         description: p.description,
         coverImage: p.beforeImage || (parseList(p.images)[0] || null),
         imageCount: parseList(p.images).length + (p.beforeImage ? 1 : 0) + (p.afterImage ? 1 : 0),
       }))
-  }, [projects, filter, typeFilter])
+  }, [projects, typeFilter])
 
-  const mediaItems = useMemo(() => {
-    if (filter === 'all') return []
-    const result: { key: string; url: string; mediaType: string; projectTitle: string; projectId: string }[] = []
+  const individualItems = useMemo(() => {
+    const result: { key: string; url: string; projectTitle: string; projectId: string }[] = []
     projects.forEach(p => {
       if (typeFilter !== 'all' && p.type !== typeFilter) return
-      if (filter === 'images') {
-        parseList(p.images).forEach(u => result.push({ key: `${p.id}-img-${u}`, url: u, mediaType: 'image', projectTitle: p.title, projectId: p.id }))
-      } else if (filter === 'models3d') {
-        parseList(p.models3d).forEach(u => result.push({ key: `${p.id}-mdl-${u}`, url: u, mediaType: 'model', projectTitle: p.title, projectId: p.id }))
-      }
+      parseList(p.images).forEach(u => result.push({ key: `${p.id}-img-${u}`, url: u, projectTitle: p.title, projectId: p.id }))
     })
     return result
-  }, [projects, filter, typeFilter])
+  }, [projects, typeFilter])
+
+  const modelItems = useMemo(() => {
+    const result: { key: string; url: string; projectTitle: string; projectId: string }[] = []
+    projects.forEach(p => {
+      if (typeFilter !== 'all' && p.type !== typeFilter) return
+      parseList(p.models3d).forEach(u => result.push({ key: `${p.id}-mdl-${u}`, url: u, projectTitle: p.title, projectId: p.id }))
+    })
+    return result
+  }, [projects, typeFilter])
 
   const closeModelViewer = useCallback(() => {
     setModelViewer(null)
@@ -136,8 +140,8 @@ export default function PortfolioPage() {
           </div>
 
           <AnimatePresence mode="wait">
-            {filter === 'all' ? (
-              <motion.div key="all" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+            {filter === 'projects' ? (
+              <motion.div key="projects" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
                 className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
               >
@@ -203,40 +207,56 @@ export default function PortfolioPage() {
                   </motion.div>
                 ))}
               </motion.div>
-            ) : (
-              <motion.div key={filter} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+            ) : filter === 'individual' ? (
+              <motion.div key="individual" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
                 className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
               >
-                {mediaItems.map((item) => (
+                {individualItems.map((item) => (
                   <motion.div key={item.key} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4 }} className="break-inside-avoid"
                   >
                     <div className="group relative overflow-hidden border border-ivory/5 hover:border-gold/15 transition-all bg-ivory/[0.015]">
-                      {item.mediaType === 'image' ? (
-                        <button onClick={() => setLightbox(item.url)} className="block w-full">
-                          <LazyImage src={assetUrl(item.url)} alt={item.projectTitle}
-                            className="w-full transition-transform duration-700 group-hover:scale-[1.02]"
-                            minHeight={200} maxHeight={450} />
-                        </button>
-                      ) : (
-                        <button onClick={() => handleModelClick(item.url, item.projectTitle)}
-                          className="w-full group cursor-pointer">
-                          <div className="w-full flex items-center justify-center bg-ivory/[0.02] py-16">
-                            <div className="text-center">
-                              <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-ivory/10 flex items-center justify-center text-ivory/20 group-hover:text-gold/60 group-hover:border-gold/30 transition-all duration-300">
-                                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1}>
-                                  <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
-                                </svg>
-                              </div>
-                              <p className="text-xs text-ivory/40 font-serif">{item.projectTitle}</p>
-                              <p className="text-[10px] text-ivory/20 mt-1 group-hover:text-gold/40 transition-colors">
-                                {lang === 'ar' ? 'اضغط لعرض النموذج' : 'Click to view 3D Model'}
-                              </p>
+                      <button onClick={() => setLightbox(item.url)} className="block w-full">
+                        <LazyImage src={assetUrl(item.url)} alt={item.projectTitle}
+                          className="w-full transition-transform duration-700 group-hover:scale-[1.02]"
+                          minHeight={200} maxHeight={450} />
+                      </button>
+                      <div className="p-4">
+                        <Link to={`/project/${item.projectId}`}
+                          className="text-sm font-serif text-ivory/70 hover:text-gold transition-colors"
+                        >{item.projectTitle}</Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div key="models" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
+              >
+                {modelItems.map((item) => (
+                  <motion.div key={item.key} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4 }} className="break-inside-avoid"
+                  >
+                    <div className="group relative overflow-hidden border border-ivory/5 hover:border-gold/15 transition-all bg-ivory/[0.015]">
+                      <button onClick={() => handleModelClick(item.url, item.projectTitle)}
+                        className="w-full group cursor-pointer">
+                        <div className="w-full flex items-center justify-center bg-ivory/[0.02] py-16">
+                          <div className="text-center">
+                            <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-ivory/10 flex items-center justify-center text-ivory/20 group-hover:text-gold/60 group-hover:border-gold/30 transition-all duration-300">
+                              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1}>
+                                <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
+                              </svg>
                             </div>
+                            <p className="text-xs text-ivory/40 font-serif">{item.projectTitle}</p>
+                            <p className="text-[10px] text-ivory/20 mt-1 group-hover:text-gold/40 transition-colors">
+                              {lang === 'ar' ? 'اضغط لعرض النموذج' : 'Click to view 3D Model'}
+                            </p>
                           </div>
-                        </button>
-                      )}
+                        </div>
+                      </button>
                       <div className="p-4">
                         <Link to={`/project/${item.projectId}`}
                           className="text-sm font-serif text-ivory/70 hover:text-gold transition-colors"
@@ -253,7 +273,7 @@ export default function PortfolioPage() {
             <div className="flex justify-center items-center mt-24">
               <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
             </div>
-          ) : filter === 'all' && cards.length === 0 || filter !== 'all' && mediaItems.length === 0 ? (
+          ) : filter === 'projects' && cards.length === 0 || filter === 'individual' && individualItems.length === 0 || filter === 'models3d' && modelItems.length === 0 ? (
             <p className="text-center text-ivory/20 text-sm mt-16">
               {lang === 'en' ? 'No projects yet.' : 'لا توجد مشاريع بعد.'}
             </p>
