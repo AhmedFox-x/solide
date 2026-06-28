@@ -330,7 +330,7 @@ export default function PortfolioPage() {
               {isGlb(modelViewer.url) ? (
                 <>
                   {/* @ts-expect-error model-viewer is a custom element loaded from CDN */}
-                  <model-viewer src={assetUrl(modelViewer.url)}
+                  <model-viewer src={modelViewer.url.startsWith('/models/glb/') ? modelViewer.url : assetUrl(modelViewer.url)}
                     alt={modelViewer.title}
                     className="w-full h-full"
                     camera-controls
