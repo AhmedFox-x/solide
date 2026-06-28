@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import type { Lang } from '../lib/translations'
 import { translations } from '../lib/translations'
 import { projectsApi, testimonialsApi } from '../lib/api'
@@ -18,8 +18,10 @@ export default function HomePage() {
   const [projects, setProjects] = useState<Project[]>([])
   const nav = translations.navbar[lang]
   const location = useLocation()
+  const navigate = useNavigate()
   const orderState = location.state as { orderProject?: { id: string; title: string; images: string[] } } | null
   const contactRef = useRef<HTMLDivElement>(null)
+  const scrolled = useRef(false)
 
   useEffect(() => {
     testimonialsApi.list().then(r => setTestimonials(r.testimonials)).catch(() => {})
@@ -27,10 +29,11 @@ export default function HomePage() {
   }, [])
 
   useEffect(() => {
-    if (orderState?.orderProject && contactRef.current) {
+    if (orderState?.orderProject && contactRef.current && !scrolled.current) {
+      scrolled.current = true
       setTimeout(() => {
-        contactRef.current?.scrollIntoView({ behavior: 'smooth' })
-      }, 500)
+        contactRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 800)
     }
   }, [orderState])
 
@@ -166,7 +169,7 @@ export default function HomePage() {
 
         <TestimonialsSection lang={lang} testimonials={testimonials} />
 
-        <div ref={contactRef}>
+        <div ref={contactRef} style={{ scrollMarginTop: 100 }}>
           <ContactSection lang={lang} orderProject={orderState?.orderProject || null} />
         </div>
       </main>
