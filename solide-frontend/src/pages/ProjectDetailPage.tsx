@@ -134,7 +134,6 @@ export default function ProjectDetailPage() {
                 <ImageMagnifier
                   src={assetUrl(allImages[selectedIdx])}
                   alt={project.title}
-                  zoom={2.5}
                   className="w-full h-full bg-ivory/[0.02]"
                   lang={lang}
                 />

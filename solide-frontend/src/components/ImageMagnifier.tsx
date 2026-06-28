@@ -4,17 +4,18 @@ import { motion, AnimatePresence } from "framer-motion";
 interface Props {
   src: string;
   alt: string;
-  zoom?: number;
+  minZoom?: number;
+  maxZoom?: number;
   className?: string;
   lang?: "en" | "ar";
 }
 
 export default function ImageMagnifier({
-  src, alt, zoom = 2.5, className = "", lang = "ar",
+  src, alt, minZoom = 1, maxZoom = 6, className = "", lang = "ar",
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [lens, setLens] = useState({ x: 50, y: 50, show: false });
   const [zoomed, setZoomed] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(2.5);
   const [origin, setOrigin] = useState({ x: 50, y: 50 });
 
   const getPos = useCallback((clientX: number, clientY: number) => {
@@ -26,70 +27,87 @@ export default function ImageMagnifier({
     };
   }, []);
 
+  /* mouse */
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!zoomed) return;
     const pos = getPos(e.clientX, e.clientY);
-    if (!pos) return;
-    if (zoomed) setOrigin(pos);
-    setLens({ ...pos, show: true });
+    if (pos) setOrigin(pos);
   }, [zoomed, getPos]);
 
-  const handleMouseLeave = useCallback(() => {
-    if (!zoomed) setLens((prev) => ({ ...prev, show: false }));
-  }, [zoomed]);
-
-  const doToggle = useCallback((clientX: number, clientY: number) => {
-    const pos = getPos(clientX, clientY);
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
     setZoomed((prev) => {
-      if (!prev && pos) setOrigin(pos);
+      if (!prev) {
+        const pos = getPos(e.clientX, e.clientY);
+        if (pos) setOrigin(pos);
+        setZoomLevel(2.5);
+      }
       return !prev;
     });
   }, [getPos]);
 
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    doToggle(e.clientX, e.clientY);
-  }, [doToggle]);
-
-  const touchRef = useRef<number | null>(null);
+  /* touch */
   const touchMoved = useRef(false);
+  const lastPinchDist = useRef(0);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     e.preventDefault();
     touchMoved.current = false;
-    if (e.touches.length === 1) {
-      touchRef.current = e.touches[0].identifier;
-      const t = e.touches[0];
-      const pos = getPos(t.clientX, t.clientY);
-      if (!zoomed && pos) {
-        setOrigin(pos);
-        setLens({ ...pos, show: false });
-      }
+    if (e.touches.length === 2 && zoomed) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      lastPinchDist.current = Math.sqrt(dx * dx + dy * dy);
     }
-  }, [zoomed, getPos]);
+  }, [zoomed]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     e.preventDefault();
     touchMoved.current = true;
-    if (zoomed && e.touches.length === 1) {
+
+    if (e.touches.length === 2 && zoomed) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (lastPinchDist.current > 0) {
+        const ratio = dist / lastPinchDist.current;
+        setZoomLevel((prev) => {
+          const next = prev * ratio;
+          return Math.min(maxZoom, Math.max(minZoom, next));
+        });
+      }
+      lastPinchDist.current = dist;
+
+      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      const pos = getPos(cx, cy);
+      if (pos) setOrigin(pos);
+    } else if (e.touches.length === 1 && zoomed) {
       const pos = getPos(e.touches[0].clientX, e.touches[0].clientY);
       if (pos) setOrigin(pos);
     }
-  }, [zoomed, getPos]);
+  }, [zoomed, getPos, minZoom, maxZoom]);
 
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     e.preventDefault();
+    lastPinchDist.current = 0;
     if (!touchMoved.current) {
-      const t = e.changedTouches[0];
-      doToggle(t.clientX, t.clientY);
+      setZoomed((prev) => {
+        if (!prev) {
+          const t = e.changedTouches[0];
+          const pos = getPos(t.clientX, t.clientY);
+          if (pos) setOrigin(pos);
+          setZoomLevel(2.5);
+        }
+        return !prev;
+      });
     }
-    touchRef.current = null;
-  }, [doToggle]);
+  }, [getPos]);
 
   return (
     <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       onClick={handleClick}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -111,8 +129,8 @@ export default function ImageMagnifier({
           maxHeight: 600,
           transformOrigin: `${origin.x}% ${origin.y}%`,
         }}
-        animate={{ scale: zoomed ? zoom : 1 }}
-        transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+        animate={{ scale: zoomed ? zoomLevel : 1 }}
+        transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
       />
 
       <AnimatePresence>
@@ -129,34 +147,10 @@ export default function ImageMagnifier({
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {lens.show && !zoomed && (
-          <motion.div
-            key="lens"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.15 }}
-            className="pointer-events-none absolute z-20 rounded-full border-2 border-gold/40"
-            style={{
-              width: 130,
-              height: 130,
-              left: `calc(${lens.x}% - 65px)`,
-              top: `calc(${lens.y}% - 65px)`,
-              backgroundImage: `url(${src})`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: `${zoom * 100}% ${zoom * 100}%`,
-              backgroundPosition: `${lens.x}% ${lens.y}%`,
-              boxShadow: "0 0 30px rgba(200,150,60,0.15)",
-            }}
-          />
-        )}
-      </AnimatePresence>
-
-      {!zoomed && !lens.show && (
+      {!zoomed && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10">
           <div className="bg-obsidian/80 backdrop-blur-sm px-3 py-1.5 text-[10px] tracking-wider text-gold/60 uppercase border border-gold/20 whitespace-nowrap">
-            <span>{lang === "ar" ? "اضغط للتكبير" : "Click to zoom in"}</span>
+            <span>{lang === "ar" ? "اضغط للتكبير" : "Tap to zoom"}</span>
           </div>
         </div>
       )}
@@ -164,14 +158,14 @@ export default function ImageMagnifier({
       {zoomed && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
           <div className="bg-gold/80 backdrop-blur-sm px-3 py-1.5 text-[10px] tracking-wider text-obsidian font-semibold uppercase border border-gold whitespace-nowrap">
-            <span>{lang === "ar" ? "اضغط للتصغير" : "Click to zoom out"}</span>
+            <span>{lang === "ar" ? "اضغط للتصغير" : "Tap to zoom out"}</span>
           </div>
         </div>
       )}
 
       {zoomed && (
         <div className="absolute top-4 right-4 z-10 bg-obsidian/70 backdrop-blur-sm px-2 py-1 text-[9px] text-gold/40 tracking-wider border border-gold/10 rounded">
-          {zoom}x
+          {zoomLevel.toFixed(1)}x
         </div>
       )}
 
