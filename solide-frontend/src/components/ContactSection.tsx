@@ -325,7 +325,7 @@ export default function ContactSection({ lang, orderProject }: Props) {
 
                             <div className="flex items-end gap-2">
                               <div className="flex-1">
-                                <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1">{lang === 'en' ? 'L' : 'ط'}</label>
+                                <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1">{lang === 'en' ? 'Length' : 'الطول'}</label>
                                 <input value={item.length} onChange={(e) => updateDimItem(item.id, 'length', e.target.value)}
                                   className="w-full bg-ivory/5 border border-ivory/10 px-2 py-2 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 text-left"
                                   placeholder="0"
@@ -334,7 +334,7 @@ export default function ContactSection({ lang, orderProject }: Props) {
                               </div>
                               <span className="text-ivory/15 text-xs pb-2">×</span>
                               <div className="flex-1">
-                                <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1">{lang === 'en' ? 'W' : 'ع'}</label>
+                                <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1">{lang === 'en' ? 'Width' : 'العرض'}</label>
                                 <input value={item.width} onChange={(e) => updateDimItem(item.id, 'width', e.target.value)}
                                   className="w-full bg-ivory/5 border border-ivory/10 px-2 py-2 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 text-left"
                                   placeholder="0"
@@ -343,7 +343,7 @@ export default function ContactSection({ lang, orderProject }: Props) {
                               </div>
                               <span className="text-ivory/15 text-xs pb-2">×</span>
                               <div className="flex-1">
-                                <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1">{lang === 'en' ? 'H' : 'ار'}</label>
+                                <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1">{lang === 'en' ? 'Height' : 'الارتفاع'}</label>
                                 <input value={item.height} onChange={(e) => updateDimItem(item.id, 'height', e.target.value)}
                                   className="w-full bg-ivory/5 border border-ivory/10 px-2 py-2 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 text-left"
                                   placeholder="0"
@@ -464,17 +464,7 @@ export default function ContactSection({ lang, orderProject }: Props) {
                         </div>
                       )}
 
-                      {/* optional message */}
-                      <div>
-                        <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2">
-                          {lang === 'en' ? 'Message (optional)' : 'رسالة (اختياري)'}
-                        </label>
-                        <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3}
-                          className="w-full bg-ivory/5 border border-ivory/10 px-4 py-3 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 resize-none"
-                          placeholder={lang === 'en' ? 'Any additional details...' : 'أي تفاصيل إضافية...'}
-                        />
-                      </div>
-
+                      
                     </div>
                   )}
                 </motion.div>
