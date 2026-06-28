@@ -104,7 +104,12 @@ export default function ImageMagnifier({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       className={`relative overflow-hidden cursor-none group select-none ${className}`}
-      style={{ WebkitTouchCallout: "none" as any, WebkitUserSelect: "none", userSelect: "none" }}
+      style={{
+        WebkitTouchCallout: "none" as any,
+        WebkitUserSelect: "none",
+        userSelect: "none",
+        touchAction: zoomed ? "none" : ("pan-y" as any),
+      }}
     >
       <motion.img
         src={src}
