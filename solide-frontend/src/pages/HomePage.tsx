@@ -192,7 +192,6 @@ export default function HomePage() {
 }
 
 function VideosSection({ lang }: { lang: Lang }) {
-  const t = translations.home[lang]
   return (
     <section className="py-20 md:py-28 px-4">
       <div className="max-w-6xl mx-auto">
@@ -207,7 +206,7 @@ function VideosSection({ lang }: { lang: Lang }) {
             {lang === 'en' ? '— Video —' : '— فيديو —'}
           </span>
           <h2 className="text-3xl md:text-4xl font-display text-ivory">
-            {t.videosTitle}
+            {lang === 'en' ? 'In Motion' : 'في الحركة'}
           </h2>
         </motion.div>
         <div className="aspect-video max-w-3xl mx-auto border border-ivory/5 overflow-hidden">
