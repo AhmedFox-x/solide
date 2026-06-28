@@ -369,6 +369,45 @@ export default function ContactSection({ lang, orderProject }: Props) {
                         >
                           + {lang === 'en' ? 'Add another item' : 'أضف بند آخر'}
                         </button>
+
+                        {/* reference image upload */}
+                        <div className="mt-6 pt-6 border-t border-ivory/5">
+                          <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2 text-left" style={{ direction: 'ltr' }}>
+                            {lang === 'en' ? 'Upload reference image' : 'ارفع صورة للتصميم المطلوب'}
+                            <span className="text-ivory/15 text-[10px] mr-2">({lang === 'en' ? 'optional' : 'اختياري'})</span>
+                          </label>
+                          <p className="text-[10px] text-ivory/20 mb-3 leading-relaxed text-left">
+                            {lang === 'en'
+                              ? 'Upload a photo of the desired design or the execution location so our sales team can understand your request before contacting you.'
+                              : 'ارفع صورة للتصميم المطلوب أو لمكان التنفيذ عشان فريق المبيعات يفهم طلبك بالظبط قبل ما يكلموك.'}
+                          </p>
+                          <label className="flex items-center justify-center gap-3 w-full p-4 border border-dashed border-ivory/10 bg-ivory/[0.015] cursor-pointer hover:border-gold/30 transition-colors">
+                            <input type="file" accept="image/*" className="hidden"
+                              onChange={(e) => setFile(e.target.files?.[0] || null)}
+                            />
+                            <ImagePlus className="w-5 h-5 text-gold/50" />
+                            <span className="text-xs text-ivory/40">
+                              {file ? file.name : (lang === 'en' ? 'Click to upload' : 'اضغط لاختيار صورة')}
+                            </span>
+                          </label>
+                        </div>
+
+                        {/* additional notes */}
+                        <div className="mt-5">
+                          <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2 text-left" style={{ direction: 'ltr' }}>
+                            {lang === 'en' ? 'Additional specifications' : 'أي تفاصيل أو مواصفات أخرى تود إضافتها؟'}
+                            <span className="text-ivory/15 text-[10px] mr-2">({lang === 'en' ? 'optional' : 'اختياري'})</span>
+                          </label>
+                          <p className="text-[10px] text-ivory/20 mb-3 leading-relaxed text-left">
+                            {lang === 'en'
+                              ? 'e.g. electrostatic paint, moisture-resistant, motorized opening, curved design, specific material...'
+                              : 'مثال: دهان إلكتروستاتيك مقاوم للرطوبة، دوران مش مستقيم، فتح بمحرك تلقائي، خامة معينة...'}
+                          </p>
+                          <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3}
+                            className="w-full bg-ivory/5 border border-ivory/10 px-4 py-3 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 resize-none"
+                            placeholder={lang === 'en' ? 'Any other details or specifications...' : 'أي تفاصيل أو مواصفات أخرى...'}
+                          />
+                        </div>
                       </div>
                     </div>
                   )}
@@ -436,26 +475,6 @@ export default function ContactSection({ lang, orderProject }: Props) {
                         />
                       </div>
 
-                      {/* optional file upload */}
-                      <div>
-                        <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2">
-                          {lang === 'en' ? 'Attach a sketch or reference image (optional)' : 'أرفق رسمة توضيحية أو صورة مرجعية (اختياري)'}
-                        </label>
-                        <p className="text-[10px] text-ivory/20 mb-3 leading-relaxed">
-                          {lang === 'en'
-                            ? 'Upload a photo, sketch, or any reference that describes what you want implemented. Helps us understand your request better.'
-                            : 'ارفع صورة أو رسمة توضح ما تريد تنفيذه. يساعدنا ذلك على فهم طلبك بشكل أفضل.'}
-                        </p>
-                        <label className="flex items-center justify-center gap-3 w-full p-4 border border-dashed border-ivory/10 bg-ivory/[0.015] cursor-pointer hover:border-gold/30 transition-colors">
-                          <input type="file" accept="image/*" className="hidden"
-                            onChange={(e) => setFile(e.target.files?.[0] || null)}
-                          />
-                          <ImagePlus className="w-5 h-5 text-gold/50" />
-                          <span className="text-xs text-ivory/40">
-                            {file ? file.name : (lang === 'en' ? 'Click to upload' : 'اضغط لرفع صورة')}
-                          </span>
-                        </label>
-                      </div>
                     </div>
                   )}
                 </motion.div>
