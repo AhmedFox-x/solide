@@ -31,7 +31,8 @@ export default function ContactSection({ lang, orderProject }: Props) {
   const [dir, setDir] = useState(1);
   const [selectedTypes, setSelectedTypes] = useState<string[]>(orderProject?.type ? [orderProject.type] : []);
   interface DimItem { id: number; name: string; length: string; width: string; height: string; unit: string }
-  const [dimItems, setDimItems] = useState<DimItem[]>([{ id: 1, name: "", length: "", width: "", height: "", unit: "m" }]);
+  const initialDimName = orderProject?.type || "";
+  const [dimItems, setDimItems] = useState<DimItem[]>([{ id: 1, name: initialDimName, length: "", width: "", height: "", unit: "m" }]);
   const dimIdRef = useRef(1);
   const addDimItem = useCallback(() => {
     dimIdRef.current += 1;
@@ -274,7 +275,14 @@ export default function ContactSection({ lang, orderProject }: Props) {
                         const active = selectedTypes.includes(ty)
                         return (
                           <button key={ty} type="button" onClick={() => {
-                            setSelectedTypes(prev => active ? prev.filter(t => t !== ty) : [...prev, ty])
+                            if (active) {
+                              setSelectedTypes(prev => prev.filter(t => t !== ty))
+                              setDimItems(prev => prev.filter(i => i.name !== ty))
+                            } else {
+                              setSelectedTypes(prev => [...prev, ty])
+                              dimIdRef.current += 1
+                              setDimItems(prev => [...prev, { id: dimIdRef.current, name: ty, length: "", width: "", height: "", unit: "m" }])
+                            }
                             setErrors({})
                           }}
                             className={`p-4 text-xs tracking-wider border transition-all duration-200 ${

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Solide — معرض التصاميم ثلاثية الأبعاد</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Tajawal:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#03050d;--bg2:#07091a;--bg3:#0c1128;
+    --g2:#c8963c;--g3:#e0b050;--g4:#f5cc6a;
+    --cr:#f2e8d0;--cr2:#c8b88a;--cr3:#8a7040;
+    --bd:rgba(200,150,60,.16);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--cr2);font-family:'Tajawal',sans-serif;min-height:100vh;}
+  header{
+    padding:50px 40px 36px;text-align:center;
+    border-bottom:1px solid var(--bd);
+    background:radial-gradient(ellipse 60% 60% at 50% 0%, rgba(200,150,60,.06), transparent);
+  }
+  .eyebrow{font-family:'Cinzel',serif;font-size:11px;letter-spacing:8px;color:var(--g2);text-transform:uppercase;margin-bottom:18px;}
+  h1{font-family:'Cinzel',serif;font-size:clamp(28px,5vw,52px);font-weight:900;letter-spacing:6px;
+     background:linear-gradient(135deg,var(--cr),var(--g3),var(--cr));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px;}
+  .sub{font-size:14px;color:var(--cr3);letter-spacing:1px;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;padding:50px 40px;max-width:1500px;margin:0 auto;}
+  .card{background:var(--bg2);border:1px solid var(--bd);overflow:hidden;transition:border-color .3s,transform .3s;}
+  .card:hover{border-color:rgba(200,150,60,.4);transform:translateY(-4px);}
+  model-viewer{width:100%;height:300px;background:radial-gradient(ellipse at 50% 60%, #11182c 0%, #060810 80%);
+    --poster-color:transparent;}
+  .info{padding:20px 22px;border-top:1px solid var(--bd);}
+  .num{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--g2);display:block;margin-bottom:6px;}
+  .name{font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--cr);letter-spacing:1px;margin-bottom:4px;}
+  .desc{font-size:12px;color:var(--cr3);line-height:1.7;}
+  .hint{font-size:10px;color:var(--g2);margin-top:10px;letter-spacing:1px;}
+
+  footer{text-align:center;padding:40px;border-top:1px solid var(--bd);font-size:11px;color:var(--cr3);letter-spacing:2px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">3D Product Showcase · Crystal Steel</div>
+  <h1>SOLIDE — معرض التصاميم</h1>
+  <div class="sub">دور حول كل تصميم بإصبعك أو الماوس — Auto-Rotate · Camera Controls · AR Ready</div>
+</header>
+
+<div class="grid">
+
+  <div class="card">
+    <model-viewer src="public/models/glb/main-villa-gate.glb" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" shadow-intensity="1" exposure="1" ar></model-viewer>
+    <div class="info"><span class="num">01 / Main Gate</span><div class="name">بوابة فيلا رئيسية</div><p class="desc">بوابة مزدوجة ضخمة بزخارف كريتال كلاسيكية، شعار S مركزي، وتفاصيل ذهبية.</p></div>
+  </div>
+
+  <div class="card">
+    <model-viewer src="public/models/glb/entrance-gate.glb" camera-controls auto-rotate rotation-per-second="18deg" shadow-intensity="1" exposure="1" ar></model-viewer>
+    <div class="info"><span class="num">02 / Entrance Gate</span><div class="name">بوابة فيلا خارجية</div><p class="desc">تصميم حديث بخطوط نظيفة وشرائح أفقية مع لمسات ذهبية.</p></div>
+  </div>
+
+  <div class="card">
+    <model-viewer src="public/models/glb/stair-railing-internal.glb" camera-controls auto-rotate rotation-per-second="18deg" shadow-intensity="1" exposure="1" ar></model-viewer>
+    <div class="info"><span class="num">03 / Stair Railing</span><div class="name">درابزين سلم داخلي</div><p class="desc">درابزين حديد بمقبض خشبي وتفاصيل S-Scroll ذهبية.</p></div>
+  </div>
+
+  <div class="card">
+    <model-viewer src="public/models/glb/balcony-railing.glb" camera-controls auto-rotate rotation-per-second="18deg" shadow-intensity="1" exposure="1" ar></model-viewer>
+    <div class="info"><span class="num">04 / Balcony Railing</span><div class="name">درابزين بلكونة</div><p class="desc">نقشات حلزونية وزخارف نباتية متكررة بإطار ذهبي.</p></div>
+  </div>
+
+  <div class="card">
+    <model-viewer src="public/models/glb/external-staircase.glb" camera-controls auto-rotate rotation-per-second="18deg" shadow-intensity="1" exposure="1" ar></model-viewer>
+    <div class="info"><span class="num">05 / External Staircase</span><div class="name">سلم خارجي</div><p class="desc">سلم حديد بدرجات صلب وحواف ذهبية ودرابزين جانبي.</p></div>
+  </div>
+
+  <div class="card">
+    <model-viewer src="public/models/glb/roof-stairs.glb" camera-controls auto-rotate rotation-per-second="18deg" shadow-intensity="1" exposure="1" ar></model-viewer>
+    <div class="info"><span class="num">06 / Roof Stairs</span><div class="name">سلم بدروم / روف</div><p class="desc">تصميم صناعي بسيط بدرابزين أنبوبي مزدوج.</p></div>
+  </div>
+
+  <div class="card">
+    <model-viewer src="public/models/glb/window-grill.glb" camera-controls auto-rotate rotation-per-second="18deg" shadow-intensity="1" exposure="1" ar></model-viewer>
+    <div class="info"><span class="num">07 / Window Grill</span><div class="name">شباك حماية</div><p class="desc">شبكة كريتال مربعات مع تفصيلة ماسة ذهبية مركزية.</p></div>
+  </div>
+
+  <div class="card">
+    <model-viewer src="public/models/glb/fence-section.glb" camera-controls auto-rotate rotation-per-second="18deg" shadow-intensity="1" exposure="1" ar></model-viewer>
+    <div class="info"><span class="num">08 / Fence Section</span><div class="name">سور خارجي</div><p class="desc">سور بأعمدة حديد وأطراف رمحية ذهبية بين دعامتين.</p></div>
+  </div>
+
+  <div class="card">
+    <model-viewer src="public/models/glb/iron-door.glb" camera-controls auto-rotate rotation-per-second="18deg" shadow-intensity="1" exposure="1" ar></model-viewer>
+    <div class="info"><span class="num">09 / Iron Door</span><div class="name">باب حديد خارجي</div><p class="desc">باب ثقيل بشرائح حديد متقاطعة ومقبض حلقي ذهبي.</p></div>
+  </div>
+
+  <div class="card">
+    <model-viewer src="public/models/glb/custom-art-piece.glb" camera-controls auto-rotate rotation-per-second="18deg" shadow-intensity="1" exposure="1" ar></model-viewer>
+    <div class="info"><span class="num">10 / Custom Art</span><div class="name">تصميم حر — تحفة فنية</div><p class="desc">منحوتة حائط بحرف S الذهبي المستوحى من شعار Solide.</p></div>
+  </div>
+
+</div>
+
+<footer>SOLIDE — THE WORLD OF CRYSTAL · 3D MODELS GENERATED WITH THREE.JS</footer>
+</body>
+</html>
