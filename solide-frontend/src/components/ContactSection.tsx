@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, Phone, Globe, MapPin, ArrowRight, ArrowLeft, Send, Check, ImagePlus } from "lucide-react";
 import { translations } from "../lib/translations";
@@ -30,10 +30,19 @@ export default function ContactSection({ lang, orderProject }: Props) {
   const [step, setStep] = useState(orderProject ? 1 : 0);
   const [dir, setDir] = useState(1);
   const [selectedType, setSelectedType] = useState(orderProject?.type || "");
-  const [dimLength, setDimLength] = useState("");
-  const [dimWidth, setDimWidth] = useState("");
-  const [dimHeight, setDimHeight] = useState("");
-  const [dimUnit, setDimUnit] = useState("m");
+  interface DimItem { id: number; name: string; length: string; width: string; height: string; unit: string }
+  const [dimItems, setDimItems] = useState<DimItem[]>([{ id: 1, name: "", length: "", width: "", height: "", unit: "m" }]);
+  const dimIdRef = useRef(1);
+  const addDimItem = useCallback(() => {
+    dimIdRef.current += 1;
+    setDimItems(prev => [...prev, { id: dimIdRef.current, name: "", length: "", width: "", height: "", unit: "m" }]);
+  }, []);
+  const removeDimItem = useCallback((id: number) => {
+    setDimItems(prev => prev.filter(i => i.id !== id));
+  }, []);
+  const updateDimItem = useCallback((id: number, field: keyof DimItem, value: string) => {
+    setDimItems(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
+  }, []);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -87,11 +96,16 @@ export default function ContactSection({ lang, orderProject }: Props) {
       } else {
         msgParts.push(`${lang === 'en' ? 'Type' : 'نوع العمل'}: ${selectedType}`);
       }
-      if (dimLength || dimWidth || dimHeight) {
-        const dimParts = [`${dimLength || '—'}${dimUnit}`]
-        if (dimWidth) dimParts.push(`${dimWidth}${dimUnit}`)
-        if (dimHeight) dimParts.push(`${dimHeight}${dimUnit}`)
-        msgParts.push(`${lang === 'en' ? 'Dimensions (L×W×H)' : 'الأبعاد (ط×ع×ار)'}: ${dimParts.join(' × ')}`);
+      const filledItems = dimItems.filter(i => i.name || i.length || i.width || i.height)
+      if (filledItems.length > 0) {
+        msgParts.push(`--- ${lang === 'en' ? 'Work Items' : 'بنود العمل'} ---`);
+        filledItems.forEach((item, idx) => {
+          const dimParts: string[] = []
+          if (item.length) dimParts.push(`${item.length}${item.unit}`)
+          if (item.width) dimParts.push(`${item.width}${item.unit}`)
+          if (item.height) dimParts.push(`${item.height}${item.unit}`)
+          msgParts.push(`${idx + 1}. ${item.name || (lang === 'en' ? `Item ${idx + 1}` : `بند ${idx + 1}`)}${dimParts.length ? ` — ${dimParts.join(' × ')}` : ''}`)
+        })
       }
       if (message) msgParts.push(`${lang === 'en' ? 'Message' : 'الرسالة'}: ${message}`);
       if (file) msgParts.push(`${lang === 'en' ? 'Attached file' : 'ملف مرفق'}: ${file.name}`);
@@ -270,58 +284,91 @@ export default function ContactSection({ lang, orderProject }: Props) {
                     </div>
                   )}
 
-                  {/* Step 1: Dimensions (optional) */}
+                  {/* Step 1: Work items + dimensions (optional) */}
                   {step === (orderProject ? 1 : 1) && (
                     <div className="space-y-5">
                       <div className="text-left">
                         <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2">
-                          {lang === 'en' ? 'Dimensions' : 'الأبعاد'}
+                          {lang === 'en' ? 'Work Items & Dimensions' : 'بنود العمل والأبعاد'}
                           <span className="text-ivory/15 text-[10px] mr-2">({lang === 'en' ? 'optional' : 'اختياري'})</span>
                         </label>
                         <p className="text-[10px] text-ivory/20 mb-4 leading-relaxed">
                           {lang === 'en'
-                            ? 'Enter the approximate dimensions for your project. All fields are optional.'
-                            : 'أدخل الأبعاد التقريبية لمشروعك. جميع الحقول اختيارية.'}
+                            ? 'Add each item you want us to implement (e.g. main gate, window grill, stair railing) with its dimensions.'
+                            : 'أضف كل بند تريد تنفيذه (مثل بوابة رئيسية، شباك حماية، درابزين سلم) مع أبعاده.'}
                         </p>
-                        <div className="flex items-end gap-3">
-                          <div className="flex-1">
-                            <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1.5">{lang === 'en' ? 'Length' : 'الطول'}</label>
-                            <input value={dimLength} onChange={(e) => setDimLength(e.target.value)}
-                              className="w-full bg-ivory/5 border border-ivory/10 px-3 py-2.5 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 text-left"
-                              placeholder="0"
-                              style={{ direction: 'ltr' }}
-                            />
+
+                        {dimItems.map((item, idx) => (
+                          <div key={item.id} className="mb-4 p-4 border border-ivory/5 bg-ivory/[0.01]">
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-[10px] tracking-[0.15em] uppercase text-ivory/20">
+                                {lang === 'en' ? `Item ${idx + 1}` : `البند ${idx + 1}`}
+                              </span>
+                              {dimItems.length > 1 && (
+                                <button type="button" onClick={() => removeDimItem(item.id)}
+                                  className="text-[10px] text-red-400/40 hover:text-red-400/70 uppercase tracking-wider transition-colors"
+                                >
+                                  {lang === 'en' ? 'Remove' : 'حذف'}
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="mb-3">
+                              <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1">
+                                {lang === 'en' ? 'Item name' : 'اسم البند'}
+                              </label>
+                              <input value={item.name} onChange={(e) => updateDimItem(item.id, 'name', e.target.value)}
+                                className="w-full bg-ivory/5 border border-ivory/10 px-3 py-2 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50"
+                                placeholder={lang === 'en' ? 'e.g. Main entrance gate' : 'مثال: بوابة رئيسية'}
+                              />
+                            </div>
+
+                            <div className="flex items-end gap-2">
+                              <div className="flex-1">
+                                <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1">{lang === 'en' ? 'L' : 'ط'}</label>
+                                <input value={item.length} onChange={(e) => updateDimItem(item.id, 'length', e.target.value)}
+                                  className="w-full bg-ivory/5 border border-ivory/10 px-2 py-2 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 text-left"
+                                  placeholder="0"
+                                  style={{ direction: 'ltr' }}
+                                />
+                              </div>
+                              <span className="text-ivory/15 text-xs pb-2">×</span>
+                              <div className="flex-1">
+                                <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1">{lang === 'en' ? 'W' : 'ع'}</label>
+                                <input value={item.width} onChange={(e) => updateDimItem(item.id, 'width', e.target.value)}
+                                  className="w-full bg-ivory/5 border border-ivory/10 px-2 py-2 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 text-left"
+                                  placeholder="0"
+                                  style={{ direction: 'ltr' }}
+                                />
+                              </div>
+                              <span className="text-ivory/15 text-xs pb-2">×</span>
+                              <div className="flex-1">
+                                <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1">{lang === 'en' ? 'H' : 'ار'}</label>
+                                <input value={item.height} onChange={(e) => updateDimItem(item.id, 'height', e.target.value)}
+                                  className="w-full bg-ivory/5 border border-ivory/10 px-2 py-2 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 text-left"
+                                  placeholder="0"
+                                  style={{ direction: 'ltr' }}
+                                />
+                              </div>
+                              <div className="flex-shrink-0 pb-2">
+                                <select value={item.unit} onChange={(e) => updateDimItem(item.id, 'unit', e.target.value)}
+                                  className="bg-ivory/5 border border-ivory/10 px-1.5 py-2 text-ivory text-xs outline-none transition-colors focus:border-gold/50"
+                                  style={{ direction: 'ltr' }}
+                                >
+                                  <option value="m">m</option>
+                                  <option value="cm">cm</option>
+                                  <option value="mm">mm</option>
+                                </select>
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-ivory/20 text-sm pb-2.5">×</span>
-                          <div className="flex-1">
-                            <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1.5">{lang === 'en' ? 'Width' : 'العرض'}</label>
-                            <input value={dimWidth} onChange={(e) => setDimWidth(e.target.value)}
-                              className="w-full bg-ivory/5 border border-ivory/10 px-3 py-2.5 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 text-left"
-                              placeholder="0"
-                              style={{ direction: 'ltr' }}
-                            />
-                          </div>
-                          <span className="text-ivory/20 text-sm pb-2.5">×</span>
-                          <div className="flex-1">
-                            <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1.5">{lang === 'en' ? 'Height' : 'الارتفاع'}</label>
-                            <input value={dimHeight} onChange={(e) => setDimHeight(e.target.value)}
-                              className="w-full bg-ivory/5 border border-ivory/10 px-3 py-2.5 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50 text-left"
-                              placeholder="0"
-                              style={{ direction: 'ltr' }}
-                            />
-                          </div>
-                          <div className="flex-shrink-0 pb-2.5">
-                            <label className="block text-[9px] tracking-[0.2em] uppercase text-ivory/20 mb-1.5">&nbsp;</label>
-                            <select value={dimUnit} onChange={(e) => setDimUnit(e.target.value)}
-                              className="bg-ivory/5 border border-ivory/10 px-2 py-2.5 text-ivory text-xs outline-none transition-colors focus:border-gold/50"
-                              style={{ direction: 'ltr' }}
-                            >
-                              <option value="m">م (m)</option>
-                              <option value="cm">سم (cm)</option>
-                              <option value="mm">مم (mm)</option>
-                            </select>
-                          </div>
-                        </div>
+                        ))}
+
+                        <button type="button" onClick={addDimItem}
+                          className="w-full py-3 border border-dashed border-ivory/10 text-ivory/30 text-xs tracking-[0.15em] uppercase hover:border-gold/30 hover:text-gold/50 transition-all"
+                        >
+                          + {lang === 'en' ? 'Add another item' : 'أضف بند آخر'}
+                        </button>
                       </div>
                     </div>
                   )}
