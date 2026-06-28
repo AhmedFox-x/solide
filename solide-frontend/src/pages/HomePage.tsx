@@ -210,15 +210,21 @@ function VideosSection({ lang }: { lang: Lang }) {
             {lang === 'en' ? 'In Motion' : 'في الحركة'}
           </h2>
         </motion.div>
-        <div className="aspect-video max-w-3xl mx-auto border border-ivory/5 overflow-hidden">
-          <iframe
-            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-            title="YouTube video"
-            className="w-full h-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
+        <Link
+          to="/videos"
+          className="aspect-video max-w-3xl mx-auto border border-ivory/5 overflow-hidden flex items-center justify-center group cursor-pointer"
+        >
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full border border-gold/30 flex items-center justify-center group-hover:bg-gold/10 transition-all duration-300">
+              <svg className="w-6 h-6 text-gold/60 group-hover:text-gold transition-colors ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+            <span className="text-xs tracking-[0.2em] uppercase text-ivory/30 group-hover:text-gold transition-colors">
+              {lang === 'en' ? 'Watch All Videos' : 'شاهد كل الفيديوهات'}
+            </span>
+          </div>
+        </Link>
       </div>
     </section>
   )
