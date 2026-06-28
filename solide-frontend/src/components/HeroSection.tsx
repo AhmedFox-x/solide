@@ -1,3 +1,4 @@
+import { useRef, useCallback } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { translations } from "../lib/translations";
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export default function HeroSection({ lang, setLang }: Props) {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const t = translations.hero;
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 500], [1, 0]);
@@ -19,6 +21,16 @@ export default function HeroSection({ lang, setLang }: Props) {
   const y = useTransform(scrollY, [0, 500], [0, -120]);
 
   const otherLang = lang === "en" ? "ar" : "en";
+
+  const handleVideoEnded = useCallback(() => {
+    setTimeout(() => {
+      const v = videoRef.current;
+      if (v) {
+        v.currentTime = 0;
+        v.play().catch(() => {});
+      }
+    }, 2500);
+  }, []);
 
   return (
     <section
@@ -29,14 +41,14 @@ export default function HeroSection({ lang, setLang }: Props) {
       <style>{`@media (prefers-reduced-motion: reduce) { .hero-video { display: none; } }`}</style>
       <div className="absolute inset-0 overflow-hidden hero-video">
         <video
+          ref={videoRef}
           autoPlay
           muted
-          loop
           playsInline
           preload="auto"
-          className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-[2s]"
+          className="absolute inset-0 w-full h-full object-cover"
           style={{ height: "80vh", top: "50%", transform: "translateY(-50%)" }}
-          onLoadedData={(e) => (e.currentTarget.style.opacity = "1")}
+          onEnded={handleVideoEnded}
         >
           <source src={videoSrc} type="video/mp4" />
         </video>
