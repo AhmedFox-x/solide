@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { translations } from "../lib/translations";
@@ -22,16 +22,6 @@ export default function HeroSection({ lang, setLang }: Props) {
 
   const otherLang = lang === "en" ? "ar" : "en";
 
-  const handleVideoEnded = useCallback(() => {
-    setTimeout(() => {
-      const v = videoRef.current;
-      if (v) {
-        v.currentTime = 0;
-        v.play().catch(() => {});
-      }
-    }, 2500);
-  }, []);
-
   return (
     <section
       id="home"
@@ -47,8 +37,8 @@ export default function HeroSection({ lang, setLang }: Props) {
           playsInline
           preload="auto"
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ height: "80vh", top: "50%", transform: "translateY(-50%)" }}
-          onEnded={handleVideoEnded}
+          style={{ objectPosition: "50% 30%" }}
+          loop
         >
           <source src={videoSrc} type="video/mp4" />
         </video>
