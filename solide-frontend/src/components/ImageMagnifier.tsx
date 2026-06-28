@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
@@ -16,15 +16,6 @@ export default function ImageMagnifier({
   const [lens, setLens] = useState({ x: 50, y: 50, show: false });
   const [zoomed, setZoomed] = useState(false);
   const [origin, setOrigin] = useState({ x: 50, y: 50 });
-
-  useEffect(() => {
-    if (!zoomed) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setZoomed(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [zoomed]);
 
   const getPos = useCallback((clientX: number, clientY: number) => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -173,7 +164,7 @@ export default function ImageMagnifier({
       {zoomed && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
           <div className="bg-gold/80 backdrop-blur-sm px-3 py-1.5 text-[10px] tracking-wider text-obsidian font-semibold uppercase border border-gold whitespace-nowrap">
-            <span>{lang === "ar" ? "اضغط أو Esc للخروج" : "Click or Esc to exit"}</span>
+            <span>{lang === "ar" ? "اضغط للتصغير" : "Click to zoom out"}</span>
           </div>
         </div>
       )}
