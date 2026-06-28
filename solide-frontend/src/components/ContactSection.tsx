@@ -71,14 +71,23 @@ export default function ContactSection({ lang, orderProject }: Props) {
       const msgParts: string[] = []
       if (orderProject) {
         msgParts.push(lang === 'en'
-          ? `Order: ${orderProject.title} (${orderProject.id})`
-          : `طلب: ${orderProject.title} (${orderProject.id})`);
-        if (orderProject.images[0]) msgParts.push(`Image: ${orderProject.images[0]}`);
+          ? `ORDER: ${orderProject.title}`
+          : `طلب: ${orderProject.title}`);
+        msgParts.push(`ID: ${orderProject.id}`);
+        if (orderProject.category) msgParts.push(`Category: ${orderProject.category}`);
+        if (orderProject.description) msgParts.push(`Description: ${orderProject.description}`);
+        if (orderProject.images.length > 0) {
+          msgParts.push(`---`);
+          msgParts.push(lang === 'en' ? 'Project images:' : 'صور المشروع:');
+          orderProject.images.forEach(img => msgParts.push(img));
+        }
       } else {
         msgParts.push(`${lang === 'en' ? 'Type' : 'نوع العمل'}: ${selectedType}`);
       }
       if (dimensions) msgParts.push(`${lang === 'en' ? 'Dimensions' : 'الأبعاد'}: ${dimensions}`);
       if (message) msgParts.push(`${lang === 'en' ? 'Message' : 'الرسالة'}: ${message}`);
+      if (file) msgParts.push(`${lang === 'en' ? 'Attached file' : 'ملف مرفق'}: ${file.name}`);
+      msgParts.push(`---`);
       msgParts.push(`${lang === 'en' ? 'Name' : 'الاسم'}: ${name}`);
       msgParts.push(`${lang === 'en' ? 'Phone' : 'الهاتف'}: ${phone}`);
 
@@ -122,56 +131,60 @@ export default function ContactSection({ lang, orderProject }: Props) {
           </p>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-14"
-        >
-          {t.channels.map((ch) => {
-            const Icon = iconMap[ch.icon] || MessageCircle;
-            return (
-              <a
-                key={ch.label}
-                href={ch.href}
-                target={ch.href.startsWith("http") ? "_blank" : undefined}
-                rel={ch.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="group relative block border border-ivory/10 bg-ivory/[0.015] p-6 md:p-7 transition-all duration-300 overflow-hidden hover:border-gold/40 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(200,150,60,0.1)]"
-              >
-                <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.04] to-transparent h-0 group-hover:h-full transition-all duration-300" />
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gold transition-all duration-300 group-hover:w-4/5" />
-                <Icon className="w-7 h-7 text-gold/70 mb-3 mx-auto transition-transform duration-300 group-hover:scale-110" />
-                <span className="block font-sans text-[10px] tracking-[0.25em] uppercase text-gold/60 mb-1.5">
-                  {ch.label}
-                </span>
-                <span className="block text-sm text-ivory/80 font-medium" style={{ direction: "ltr", unicodeBidi: "embed" }}>
-                  {ch.value}
-                </span>
-              </a>
-            );
-          })}
-        </motion.div>
+        {!orderProject && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-14"
+          >
+            {t.channels.map((ch) => {
+              const Icon = iconMap[ch.icon] || MessageCircle;
+              return (
+                <a
+                  key={ch.label}
+                  href={ch.href}
+                  target={ch.href.startsWith("http") ? "_blank" : undefined}
+                  rel={ch.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="group relative block border border-ivory/10 bg-ivory/[0.015] p-6 md:p-7 transition-all duration-300 overflow-hidden hover:border-gold/40 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(200,150,60,0.1)]"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-b from-gold/[0.04] to-transparent h-0 group-hover:h-full transition-all duration-300" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-gold transition-all duration-300 group-hover:w-4/5" />
+                  <Icon className="w-7 h-7 text-gold/70 mb-3 mx-auto transition-transform duration-300 group-hover:scale-110" />
+                  <span className="block font-sans text-[10px] tracking-[0.25em] uppercase text-gold/60 mb-1.5">
+                    {ch.label}
+                  </span>
+                  <span className="block text-sm text-ivory/80 font-medium" style={{ direction: "ltr", unicodeBidi: "embed" }}>
+                    {ch.value}
+                  </span>
+                </a>
+              );
+            })}
+          </motion.div>
+        )}
 
-        <motion.button
-          onClick={() => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" })}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="group inline-flex items-center gap-3 px-12 py-4 bg-gradient-to-br from-gold/80 to-gold text-obsidian font-sans text-sm tracking-[0.25em] uppercase transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_60px_rgba(200,150,60,0.28)] cursor-pointer"
-          style={{ clipPath: "polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)" }}
-        >
-          <span>{t.cta}</span>
-          {lang === "ar" ? (
-            <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
-          ) : (
-            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-          )}
-        </motion.button>
+        {!orderProject && (
+          <motion.button
+            onClick={() => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" })}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="group inline-flex items-center gap-3 px-12 py-4 bg-gradient-to-br from-gold/80 to-gold text-obsidian font-sans text-sm tracking-[0.25em] uppercase transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_60px_rgba(200,150,60,0.28)] cursor-pointer"
+            style={{ clipPath: "polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)" }}
+          >
+            <span>{t.cta}</span>
+            {lang === "ar" ? (
+              <ArrowLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
+            ) : (
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+            )}
+          </motion.button>
+        )}
 
         {/* wizard form */}
-        <div id="contact-form" className="mt-20 pt-16 border-t border-ivory/5">
+        <div id="contact-form" className={`${orderProject ? 'mt-0' : 'mt-20'} pt-16 border-t border-ivory/5`} style={{ scrollMarginTop: 100 }}>
           <p className="text-ivory/30 text-sm tracking-[0.2em] uppercase mb-8">
             {done ? (lang === 'en' ? 'Message Sent' : 'تم الإرسال') : t.formTitle}
           </p>
@@ -329,8 +342,13 @@ export default function ContactSection({ lang, orderProject }: Props) {
                       {/* optional file upload */}
                       <div>
                         <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2">
-                          {lang === 'en' ? 'Attach an image (optional)' : 'أرفق صورة (اختياري)'}
+                          {lang === 'en' ? 'Attach a sketch or reference image (optional)' : 'أرفق رسمة توضيحية أو صورة مرجعية (اختياري)'}
                         </label>
+                        <p className="text-[10px] text-ivory/20 mb-3 leading-relaxed">
+                          {lang === 'en'
+                            ? 'Upload a photo, sketch, or any reference that describes what you want implemented. Helps us understand your request better.'
+                            : 'ارفع صورة أو رسمة توضح ما تريد تنفيذه. يساعدنا ذلك على فهم طلبك بشكل أفضل.'}
+                        </p>
                         <label className="flex items-center justify-center gap-3 w-full p-4 border border-dashed border-ivory/10 bg-ivory/[0.015] cursor-pointer hover:border-gold/30 transition-colors">
                           <input type="file" accept="image/*" className="hidden"
                             onChange={(e) => setFile(e.target.files?.[0] || null)}

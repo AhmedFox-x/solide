@@ -35,7 +35,7 @@ export interface Project {
 }
 
 export interface OrderProject {
-  id: string; title: string; images: string[]; type?: string
+  id: string; title: string; images: string[]; type?: string; category?: string; description?: string
 }
 
 export interface Testimonial {
