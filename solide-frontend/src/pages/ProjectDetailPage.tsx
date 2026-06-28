@@ -7,6 +7,7 @@ import type { Project } from '../lib/api'
 import GeometricBg from '../components/GeometricBg'
 import AppNavbar from '../components/AppNavbar'
 import { useLang } from '../lib/useLang'
+import LazyImage from '../components/LazyImage'
 import ImageMagnifier from '../components/ImageMagnifier'
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Grid3X3 } from 'lucide-react'
 import logo from '../assets/logo-bg.png'
@@ -189,8 +190,8 @@ export default function ProjectDetailPage() {
                         }`}
                         style={{ aspectRatio: '1' }}
                       >
-                        <img src={assetUrl(url)} alt={`${project.title} ${i + 1}`}
-                          className="w-full h-full object-cover" loading="lazy" />
+                        <LazyImage src={assetUrl(url)} alt={`${project.title} ${i + 1}`}
+                          className="w-full h-full" />
                       </button>
                     ))}
                   </div>
@@ -240,8 +241,8 @@ export default function ProjectDetailPage() {
                   >
                     <div style={{ aspectRatio: '4/3' }} className="overflow-hidden">
                       {cover ? (
-                        <img src={assetUrl(cover)} alt={p.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" loading="lazy" />
+                        <LazyImage src={assetUrl(cover)} alt={p.title}
+                          className="w-full h-full transition-transform duration-500 group-hover:scale-[1.05]" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-ivory/[0.02]">
                           <span className="text-ivory/10 text-lg font-display">{p.title.charAt(0)}</span>

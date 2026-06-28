@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { translations } from '../lib/translations'
@@ -8,12 +8,20 @@ import type { Project } from '../lib/api'
 import GeometricBg from '../components/GeometricBg'
 import AppNavbar from '../components/AppNavbar'
 import { useLang } from '../lib/useLang'
+import LazyImage from '../components/LazyImage'
+import { X, Maximize2 } from 'lucide-react'
 import logo from '../assets/logo-bg.png'
 
 function parseList(v: string | null | undefined): string[] {
   if (!v) return []
   try { const p = JSON.parse(v); return Array.isArray(p) ? p.filter(Boolean) : [] }
   catch { return [] }
+}
+
+function isEmbedUrl(url: string): string | null {
+  const sketchfab = url.match(/sketchfab\.com\/3d-models\/([a-zA-Z0-9-]+)/)
+  if (sketchfab) return `https://sketchfab.com/models/${sketchfab[1]}/embed`
+  return null
 }
 
 export default function PortfolioPage() {
@@ -24,7 +32,10 @@ export default function PortfolioPage() {
   const [filter, setFilter] = useState<'all' | 'images' | 'models3d'>('all')
   const [typeFilter, setTypeFilter] = useState<string>('all')
   const [lightbox, setLightbox] = useState<string | null>(null)
+  const [modelViewer, setModelViewer] = useState<{ url: string; title: string } | null>(null)
+  const [modelInteracted, setModelInteracted] = useState(false)
   const projectTypes = translations.projectTypes[lang]
+  const typeScrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     projectsApi.list().then(r => setProjects(r.projects)).catch(() => {}).finally(() => setLoading(false))
@@ -61,6 +72,16 @@ export default function PortfolioPage() {
     return result
   }, [projects, filter, typeFilter])
 
+  const closeModelViewer = useCallback(() => {
+    setModelViewer(null)
+    setModelInteracted(false)
+  }, [])
+
+  const handleModelClick = useCallback((url: string, title: string) => {
+    setModelViewer({ url, title })
+    setModelInteracted(false)
+  }, [])
+
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="bg-obsidian text-ivory min-h-screen" lang={lang}>
       <GeometricBg count={18} />
@@ -93,19 +114,25 @@ export default function PortfolioPage() {
             ))}
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-10">
-            <button onClick={() => setTypeFilter('all')}
-              className={`px-3 py-1 text-[11px] tracking-wider transition-all ${
-                typeFilter === 'all' ? 'bg-ivory/10 text-ivory' : 'text-ivory/30 border border-ivory/10 hover:border-ivory/30'
-              }`}
-            >{t.filterTypeAll}</button>
-            {projectTypes.map(ty => (
-              <button key={ty} onClick={() => setTypeFilter(ty)}
-                className={`px-3 py-1 text-[11px] tracking-wider transition-all ${
-                  typeFilter === ty ? 'bg-ivory/10 text-ivory' : 'text-ivory/30 border border-ivory/10 hover:border-ivory/30'
+          {/* type filters — horizontal scroll on mobile */}
+          <div ref={typeScrollRef}
+            className="overflow-x-auto scrollbar-none mb-10 -mx-4 px-4"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            <div className="flex gap-2 w-max">
+              <button onClick={() => setTypeFilter('all')}
+                className={`px-3 py-1 text-[11px] tracking-wider transition-all whitespace-nowrap ${
+                  typeFilter === 'all' ? 'bg-ivory/10 text-ivory' : 'text-ivory/30 border border-ivory/10 hover:border-ivory/30'
                 }`}
-              >{ty}</button>
-            ))}
+              >{t.filterTypeAll}</button>
+              {projectTypes.map(ty => (
+                <button key={ty} onClick={() => setTypeFilter(ty)}
+                  className={`px-3 py-1 text-[11px] tracking-wider transition-all whitespace-nowrap ${
+                    typeFilter === ty ? 'bg-ivory/10 text-ivory' : 'text-ivory/30 border border-ivory/10 hover:border-ivory/30'
+                  }`}
+                >{ty}</button>
+              ))}
+            </div>
           </div>
 
           <AnimatePresence mode="wait">
@@ -125,8 +152,8 @@ export default function PortfolioPage() {
                       <div className="relative overflow-hidden" style={{ aspectRatio: '4/3' }}>
                         {item.coverImage ? (
                           <>
-                            <img src={assetUrl(item.coverImage)}
-                              alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.06]" loading="lazy" />
+                            <LazyImage src={assetUrl(item.coverImage)}
+                              alt={item.title} className="w-full h-full transition-transform duration-700 group-hover:scale-[1.06]" />
                             <div className="absolute inset-0 bg-gradient-to-t from-obsidian/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                           </>
                         ) : (
@@ -188,22 +215,27 @@ export default function PortfolioPage() {
                     <div className="group relative overflow-hidden border border-ivory/5 hover:border-gold/15 transition-all bg-ivory/[0.015]">
                       {item.mediaType === 'image' ? (
                         <button onClick={() => setLightbox(item.url)} className="block w-full">
-                          <img src={assetUrl(item.url)}
-                            alt={item.projectTitle} className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                            style={{ minHeight: 200, maxHeight: 450 }} loading="lazy" />
+                          <LazyImage src={assetUrl(item.url)} alt={item.projectTitle}
+                            className="w-full transition-transform duration-700 group-hover:scale-[1.02]"
+                            minHeight={200} maxHeight={450} />
                         </button>
                       ) : (
-                        <div className="w-full flex items-center justify-center bg-ivory/[0.02] py-16">
-                          <div className="text-center">
-                            <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-ivory/10 flex items-center justify-center text-ivory/20">
-                              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1}>
-                                <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
-                              </svg>
+                        <button onClick={() => handleModelClick(item.url, item.projectTitle)}
+                          className="w-full group cursor-pointer">
+                          <div className="w-full flex items-center justify-center bg-ivory/[0.02] py-16">
+                            <div className="text-center">
+                              <div className="w-14 h-14 mx-auto mb-3 rounded-full border border-ivory/10 flex items-center justify-center text-ivory/20 group-hover:text-gold/60 group-hover:border-gold/30 transition-all duration-300">
+                                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1}>
+                                  <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
+                                </svg>
+                              </div>
+                              <p className="text-xs text-ivory/40 font-serif">{item.projectTitle}</p>
+                              <p className="text-[10px] text-ivory/20 mt-1 group-hover:text-gold/40 transition-colors">
+                                {lang === 'ar' ? 'اضغط لعرض النموذج' : 'Click to view 3D Model'}
+                              </p>
                             </div>
-                            <p className="text-xs text-ivory/40 font-serif">{item.projectTitle}</p>
-                            <p className="text-[10px] text-ivory/20 mt-1">3D Model</p>
                           </div>
-                        </div>
+                        </button>
                       )}
                       <div className="p-4">
                         <Link to={`/project/${item.projectId}`}
@@ -238,6 +270,63 @@ export default function PortfolioPage() {
             <motion.img key={lightbox} initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
               src={assetUrl(lightbox)} alt=""
               className="max-w-full max-h-[90vh] object-contain" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 3D Model viewer with gesture isolation */}
+      <AnimatePresence>
+        {modelViewer && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-obsidian/95 flex items-center justify-center p-4"
+          >
+            {/* close */}
+            <button onClick={closeModelViewer}
+              className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center text-ivory/60 hover:text-ivory transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <motion.div key={modelViewer.url} initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
+              className="relative w-full max-w-4xl aspect-video bg-black/50 rounded overflow-hidden"
+            >
+              {isEmbedUrl(modelViewer.url) ? (
+                <>
+                  <iframe src={isEmbedUrl(modelViewer.url)!}
+                    title={modelViewer.title}
+                    className="w-full h-full"
+                    allow="autoplay; fullscreen; xr-spatial-tracking"
+                    allowFullScreen
+                    style={{ pointerEvents: modelInteracted ? 'auto' : 'none' }}
+                  />
+                  {/* gesture isolation overlay */}
+                  {!modelInteracted && (
+                    <div onClick={() => setModelInteracted(true)}
+                      className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black/40 transition-opacity hover:bg-black/20"
+                    >
+                      <div className="text-center">
+                        <Maximize2 className="w-8 h-8 mx-auto mb-3 text-gold/60" />
+                        <p className="text-sm tracking-[0.2em] uppercase text-ivory/60">
+                          {lang === 'ar' ? 'اضغط للتفاعل مع النموذج' : 'Tap to interact with model'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <p className="text-sm text-ivory/60 mb-4">{modelViewer.title}</p>
+                    <a href={modelViewer.url} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-6 py-3 border border-gold/30 text-gold text-xs tracking-[0.2em] uppercase hover:bg-gold/10 transition-all"
+                    >
+                      <Maximize2 className="w-4 h-4" />
+                      {lang === 'ar' ? 'فتح النموذج' : 'Open Model'}
+                    </a>
+                  </div>
+                </div>
+              )}
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
