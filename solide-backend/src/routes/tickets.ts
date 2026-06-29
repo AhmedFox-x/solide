@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import { requireAuth } from "../middleware/auth";
+import { sendWhatsApp } from "../utils/whatsapp";
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -27,6 +28,22 @@ router.post("/", async (req, res) => {
     const ticket = await prisma.ticket.create({
       data: { name, email, phone, subject, message, type: type || "inquiry", preferredContact: contact },
     });
+
+    // Send WhatsApp notification to business owner
+    const waBody = [
+      "🔔 *طلب جديد — Solide*",
+      "",
+      `*الاسم:* ${name}`,
+      `*رقم الهاتف:* ${phone}`,
+      email ? `*البريد:* ${email}` : null,
+      `*وسيلة التواصل:* ${contact === "email" ? "إيميل" : "واتساب"}`,
+      `*الموضوع:* ${subject}`,
+      "",
+      `*التفاصيل:*`,
+      message,
+    ].filter(Boolean).join("\n");
+    sendWhatsApp(waBody);
+
     res.status(201).json({ ticket });
   } catch (err) {
     console.error("Failed to create ticket:", err);
