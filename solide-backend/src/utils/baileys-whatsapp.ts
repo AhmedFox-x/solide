@@ -112,11 +112,12 @@ export async function sendWhatsAppBaileys(to: string, message: string): Promise<
   }
 }
 
-export function getWhatsAppStatus() {
+export async function getWhatsAppStatus() {
+  const session = await prisma.whatsAppSession.findUnique({ where: { id: "primary" } });
   return {
     connected,
-    qrCode: currentQr,
-    session: prisma.whatsAppSession.findFirst({ orderBy: { createdAt: "desc" } }),
+    qrCode: session?.qrCode ?? null,
+    phoneNumber: session?.phoneNumber ?? null,
   };
 }
 
