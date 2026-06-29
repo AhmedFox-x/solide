@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import { requireAuth } from "../middleware/auth";
-import { sendWhatsApp } from "../utils/whatsapp";
+import { sendWhatsApp, sendEmail, logFallbackWaLink } from "../utils/notify";
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -29,7 +29,7 @@ router.post("/", async (req, res) => {
       data: { name, email, phone, subject, message, type: type || "inquiry", preferredContact: contact },
     });
 
-    // Send WhatsApp notification to business owner
+    // Send notifications to business owner
     const waBody = [
       "🔔 *طلب جديد — Solide*",
       "",
@@ -43,6 +43,8 @@ router.post("/", async (req, res) => {
       message,
     ].filter(Boolean).join("\n");
     sendWhatsApp(waBody);
+    sendEmail(`طلب جديد من ${name} — ${subject}`, waBody.replace(/\*([^*]+)\*/g, "$1"));
+    logFallbackWaLink(waBody.replace(/\*([^*]+)\*/g, ""));
 
     res.status(201).json({ ticket });
   } catch (err) {
