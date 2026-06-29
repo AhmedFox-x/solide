@@ -51,7 +51,7 @@ export default function PortfolioPage() {
   const [lightbox, setLightbox] = useState<string | null>(null)
   const [modelViewer, setModelViewer] = useState<{ url: string; title: string } | null>(null)
   const [modelInteracted, setModelInteracted] = useState(false)
-  const projectTypes = translations.projectTypes[lang]
+  const projectTypes = Object.entries(translations.projectTypes).map(([ar, en]) => lang === 'en' ? en : ar)
   const typeScrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {

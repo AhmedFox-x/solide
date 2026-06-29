@@ -28,7 +28,7 @@ export default function AdminProjectForm() {
   const isEdit = !!id
   const [form, setForm] = useState<FormData & { featured: boolean }>({
     title: '', description: '', category: 'تشكيل معادن',
-    type: translations.projectTypes.ar[0], images: '[]', videos: '[]', models3d: '[]', beforeImage: '', status: 'draft', featured: false,
+    type: Object.keys(translations.projectTypes)[0], images: '[]', videos: '[]', models3d: '[]', beforeImage: '', status: 'draft', featured: false,
   })
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -137,7 +137,7 @@ export default function AdminProjectForm() {
     finally { setLoading(false) }
   }
 
-  const projectTypeOptions = translations.projectTypes.ar
+  const projectTypeOptions = Object.keys(translations.projectTypes)
   // show Arabic labels, store the Arabic value (matches what PortfolioPage compares)
   const fields: { key: keyof FormData; label: string; rows?: number }[] = [
     { key: 'title', label: 'Title' },

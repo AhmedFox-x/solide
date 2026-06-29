@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { translations } from '../lib/translations'
 import type { Lang } from '../lib/translations'
 
 interface Props {
@@ -24,16 +25,15 @@ const socialLinks = [
 ]
 
 export default function Footer({ lang }: Props) {
+  const f = translations.footer[lang === 'en' ? 'en' : 'ar'] as typeof translations.footer.en
   return (
     <footer className="relative z-[1] pt-24 pb-0 px-4">
-      {/* gold gradient divider */}
       <div className="max-w-7xl mx-auto mb-16">
         <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
       </div>
 
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 mb-14 text-center md:text-right">
-          {/* Column 1 — Brand */}
           <div className="md:order-1">
             <span className="font-display text-2xl md:text-3xl tracking-[0.3em] text-ivory block mb-4"
               style={{ fontFamily: "'Playfair Display', serif" }}
@@ -41,24 +41,16 @@ export default function Footer({ lang }: Props) {
               SOLIDE
             </span>
             <p className="text-sm text-ivory/30 leading-relaxed max-w-xs mx-auto md:mx-0">
-              {lang === 'en'
-                ? 'Premium metal craftsmanship — wrought iron art, defined by design.'
-                : 'صناعة معدنية فاخرة — فن الحديد الكريتال، محدّد بالتصميم.'}
+              {f.brandDesc}
             </p>
           </div>
 
-          {/* Column 2 — Quick Links */}
           <div className="md:order-2">
             <h4 className="text-xs tracking-[0.25em] uppercase text-gold/60 font-semibold mb-6">
-              {lang === 'en' ? 'Quick Links' : 'روابط سريعة'}
+              {f.quickLinks}
             </h4>
             <div className="space-y-4">
-              {[
-                { to: '/', label: lang === 'en' ? 'Home' : 'الرئيسية' },
-                { to: '/portfolio', label: lang === 'en' ? 'Portfolio' : 'أعمالنا' },
-                { to: '/videos', label: lang === 'en' ? 'Videos' : 'فيديو' },
-                { to: '#contact', label: lang === 'en' ? 'Contact' : 'اتصل بنا' },
-              ].map(link => (
+              {f.links.map((link: { to: string; label: string }) => (
                 <div key={link.label} className="flex items-center gap-2.5 justify-center md:justify-start">
                   <span className="w-1 h-1 rounded-full bg-gold/40 flex-shrink-0" />
                   <Link
@@ -72,10 +64,9 @@ export default function Footer({ lang }: Props) {
             </div>
           </div>
 
-          {/* Column 3 — Social */}
           <div className="md:order-3">
             <h4 className="text-xs tracking-[0.25em] uppercase text-gold/60 font-semibold mb-6">
-              {lang === 'en' ? 'Follow Us' : 'تابعنا'}
+              {f.followUs}
             </h4>
             <div className="flex items-center gap-5 justify-center md:justify-start">
               {socialLinks.map(s => (
@@ -99,10 +90,9 @@ export default function Footer({ lang }: Props) {
           </div>
         </div>
 
-        {/* copyright bar */}
         <div className="border-t border-ivory/5 pt-6 pb-8">
           <p className="text-[11px] text-ivory/15 tracking-wider text-center">
-            &copy; {new Date().getFullYear()} SOLIDE. {lang === 'en' ? 'All rights reserved.' : 'جميع الحقوق محفوظة.'}
+            &copy; {new Date().getFullYear()} SOLIDE. {f.copyright}
           </p>
         </div>
       </div>

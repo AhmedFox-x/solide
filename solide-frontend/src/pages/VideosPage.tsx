@@ -40,7 +40,7 @@ export default function VideosPage() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null)
   const [videoError, setVideoError] = useState(false)
   const [typeFilter, setTypeFilter] = useState<string>('all')
-  const projectTypes = translations.projectTypes[lang]
+  const projectTypes = Object.entries(translations.projectTypes).map(([ar, en]) => lang === 'en' ? en : ar)
 
   useEffect(() => {
     projectsApi.list().then(r => setProjects(r.projects)).catch(() => {}).finally(() => setLoading(false))

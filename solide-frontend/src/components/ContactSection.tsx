@@ -25,7 +25,7 @@ const stepVariants = {
 
 export default function ContactSection({ lang, orderProject }: Props) {
   const t = translations.contact[lang];
-  const baseTypes = translations.projectTypes[lang];
+  const baseTypes = Object.entries(translations.projectTypes).map(([ar, en]) => lang === 'en' ? en : ar);
   const projectTypes = [...baseTypes, lang === 'en' ? 'Other' : 'أخرى'];
   const [step, setStep] = useState(orderProject ? 1 : 0);
   const [dir, setDir] = useState(1);

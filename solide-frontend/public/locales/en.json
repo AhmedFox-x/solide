@@ -1,0 +1,99 @@
+{
+  "hero": {
+    "subtitle": "Precision Metal Fabrication",
+    "tagline": "Wrought Iron Art, Defined by Design"
+  },
+  "about": {
+    "heading": "About Solide",
+    "body": "We transform raw metal into architectural expressions. Every weld, every cut, every finish carries the weight of our commitment to precision.",
+    "stats": [
+      { "label": "Projects Delivered", "value": "350+" },
+      { "label": "Years Experience", "value": "18" },
+      { "label": "Countries Served", "value": "2" },
+      { "label": "Response Time", "value": "24h" }
+    ]
+  },
+  "services": {
+    "heading": "Our Capabilities",
+    "items": [
+      { "title": "Stairs & Railings", "desc": "Indoor and outdoor wrought iron stairs with intricate railings and electrostatic coating for lasting beauty." },
+      { "title": "Windows & Doors", "desc": "Wrought iron windows, security grilles, and gates in modern and classic designs." },
+      { "title": "Balconies & Fences", "desc": "Iron fencing and perimeter solutions for villas and buildings — strength and elegance combined." },
+      { "title": "Gates & Entrances", "desc": "Premium wrought iron gates for villas and compounds — handcrafted designs blending security with aesthetics." },
+      { "title": "Electrostatic Coating", "desc": "Rust and weather-resistant protective layer — a consistent standard on every piece." },
+      { "title": "Installation & Maintenance", "desc": "Specialized installation team with a full-year warranty and maintenance service." }
+    ]
+  },
+  "portfolio": {
+    "heading": "Our Work",
+    "filterProjects": "Projects",
+    "filterIndividual": "Standalone",
+    "filterModels": "3D Models",
+    "filterTypeAll": "All Types"
+  },
+  "videos": {
+    "heading": "In Motion",
+    "subtitle": "See our fabrication process and finished projects.",
+    "filterTypeAll": "All Types"
+  },
+  "projectTypes": {
+    "External Doors": "External Doors",
+    "Villa Gates": "Villa Gates",
+    "External Stairs": "External Stairs",
+    "Rooftop Stairs": "Rooftop Stairs",
+    "Main Villa Gates": "Main Villa Gates",
+    "Window Protection": "Window Protection",
+    "Balcony Railings": "Balcony Railings",
+    "Internal Stair Railings": "Internal Stair Railings"
+  },
+  "testimonials": {
+    "heading": "What Our Clients Say"
+  },
+  "contact": {
+    "sectionLabel": "Let's Build Together",
+    "tagline": "We build with you from the first step",
+    "channels": [
+      { "label": "WhatsApp", "value": "\u200E01060512080", "icon": "MessageCircle", "href": "https://wa.me/201060512080" },
+      { "label": "Phone", "value": "\u200E01060512080", "icon": "Phone", "href": "tel:+201060512080" },
+      { "label": "Facebook", "value": "Solide Egypt", "icon": "Globe", "href": "https://www.facebook.com/solidecompany/" },
+      { "label": "Location", "value": "Cairo, Egypt", "icon": "MapPin", "href": "#" }
+    ],
+    "cta": "Order Now →",
+    "formTitle": "Or Send Us a Message",
+    "preferredContact": "Preferred contact method",
+    "contactWhatsapp": "WhatsApp",
+    "contactEmail": "Email",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Message",
+    "submit": "Send Message",
+    "success": "Message sent successfully!",
+    "error": "Failed to send. Please try again."
+  },
+  "navbar": ["Home", "About", "Services", "Portfolio", "Videos", "Testimonials", "Contact"],
+  "footer": {
+    "brandDesc": "Premium metal craftsmanship — wrought iron art, defined by design.",
+    "quickLinks": "Quick Links",
+    "followUs": "Follow Us",
+    "links": [
+      { "to": "/", "label": "Home" },
+      { "to": "/portfolio", "label": "Portfolio" },
+      { "to": "/videos", "label": "Videos" },
+      { "to": "#contact", "label": "Contact" }
+    ],
+    "copyright": "All rights reserved."
+  },
+  "home": {
+    "featuredLabel": "— Featured Works —",
+    "featuredHeading": "Our latest projects",
+    "viewAll": "View All Projects",
+    "categoryLabel": "Metal Work",
+    "scroll": "Scroll",
+    "premiumBadge": "Premium Metal Craftsmanship",
+    "viewWork": "View Our Work",
+    "startProject": "Start a Project",
+    "viewDetails": "View Details",
+    "noMedia": "No media yet."
+  }
+}

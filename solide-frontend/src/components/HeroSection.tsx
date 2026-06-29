@@ -119,7 +119,7 @@ export default function HeroSection({ lang, setLang }: Props) {
           </span>
         </motion.div>
 
-        {/* subtitle EN */}
+        {/* subtitle */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -127,7 +127,7 @@ export default function HeroSection({ lang, setLang }: Props) {
           className="mb-6"
         >
           <span className="inline-block px-5 py-2 border border-gold/20 text-gold text-xs tracking-[0.25em] uppercase">
-            {t.en.subtitle}
+            {t[lang].subtitle}
           </span>
         </motion.div>
 
@@ -144,16 +144,16 @@ export default function HeroSection({ lang, setLang }: Props) {
           </span>
         </motion.h1>
 
-        {/* tagline AR */}
+        {/* tagline */}
         <motion.p
-          key={`ar-tag-${lang}`}
+          key={`tag-${lang}`}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.45 }}
           className="text-ivory/50 text-xl md:text-3xl font-sans mb-14 leading-relaxed"
-          style={{ direction: "rtl" }}
+          style={{ direction: lang === "ar" ? "rtl" : "ltr" }}
         >
-          {t.ar.tagline}
+          {t[lang].tagline}
         </motion.p>
 
         {/* CTAs */}
