@@ -9,6 +9,8 @@ import projectsRouter from "./routes/projects";
 import testimonialsRouter from "./routes/testimonials";
 import ticketsRouter from "./routes/tickets";
 import mediaRouter from "./routes/media";
+import whatsappRouter from "./routes/whatsapp";
+import { startBaileys } from "./utils/baileys-whatsapp";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { execSync } from "child_process";
@@ -33,6 +35,7 @@ app.use("/api/projects", projectsRouter);
 app.use("/api/testimonials", testimonialsRouter);
 app.use("/api/tickets", ticketsRouter);
 app.use("/api/media", mediaRouter);
+app.use("/api/whatsapp", whatsappRouter);
 
 app.use((_req, res) => res.status(404).json({ error: "Not found" }));
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
@@ -161,5 +164,6 @@ async function seed() {
 
 app.listen(PORT, async () => {
   await seed();
+  await startBaileys();
   console.log(`\n  Solide API → http://localhost:${PORT}\n`);
 });

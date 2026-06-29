@@ -44,10 +44,23 @@ function ownerEmail(): string | null {
   return process.env.OWNER_EMAIL || null;
 }
 
-export function sendWhatsApp(body: string): void {
+export async function sendWhatsApp(body: string): Promise<void> {
+  // Try Baileys first (zero-setup, just scan QR once)
+  try {
+    const { isWhatsAppConnected, sendWhatsAppBaileys } = await import("./baileys-whatsapp");
+    if (isWhatsAppConnected()) {
+      const phone = ownerPhone();
+      if (phone) {
+        const sent = await sendWhatsAppBaileys(phone, body);
+        if (sent) return;
+      }
+    }
+  } catch {}
+
+  // Fallback to Twilio
   const client = getTwilioClient();
   if (!client) {
-    console.log("WhatsApp skipped: TWILIO_ACCOUNT_SID/AUTH_TOKEN not configured");
+    console.log("WhatsApp (Twilio) skipped: not configured");
     return;
   }
   const phone = ownerPhone();
@@ -58,8 +71,8 @@ export function sendWhatsApp(body: string): void {
   const from = process.env.TWILIO_WHATSAPP_FROM || "whatsapp:+14155238886";
   client.messages
     .create({ from, to: `whatsapp:${phone}`, body })
-    .then(() => console.log("WhatsApp sent to", phone))
-    .catch((err: any) => console.error("WhatsApp failed:", err.message));
+    .then(() => console.log("WhatsApp (Twilio) sent to", phone))
+    .catch((err: any) => console.error("WhatsApp (Twilio) failed:", err.message));
 }
 
 export function sendEmail(subject: string, text: string): void {

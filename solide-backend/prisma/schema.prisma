@@ -84,3 +84,15 @@ model Media {
 
   @@map("media")
 }
+
+model WhatsAppSession {
+  id              String   @id @default(uuid())
+  authState       String?
+  qrCode          String?
+  status          String   @default("disconnected")
+  phoneNumber     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("whatsapp_sessions")
+}
