@@ -31,9 +31,8 @@ export default function ContactSection({ lang, orderProject }: Props) {
   const [dir, setDir] = useState(1);
   const [selectedTypes, setSelectedTypes] = useState<string[]>(orderProject?.type ? [orderProject.type] : []);
   interface DimItem { id: number; name: string; length: string; width: string; height: string; unit: string }
-  const initialDimName = orderProject?.type || "";
-  const [dimItems, setDimItems] = useState<DimItem[]>([{ id: 1, name: initialDimName, length: "", width: "", height: "", unit: "m" }]);
-  const dimIdRef = useRef(1);
+  const [dimItems, setDimItems] = useState<DimItem[]>(orderProject?.type ? [{ id: 1, name: orderProject.type, length: "", width: "", height: "", unit: "m" }] : []);
+  const dimIdRef = useRef(orderProject?.type ? 1 : 0);
   const addDimItem = useCallback(() => {
     dimIdRef.current += 1;
     setDimItems(prev => [...prev, { id: dimIdRef.current, name: "", length: "", width: "", height: "", unit: "m" }]);
@@ -64,6 +63,7 @@ export default function ContactSection({ lang, orderProject }: Props) {
     }
     if (step === (orderProject ? 1 : 2)) {
       if (!name.trim()) errs.name = lang === "en" ? "Name is required" : "الاسم مطلوب";
+      if (preferredContact === 'email' && !email.trim()) errs.email = lang === "en" ? "Email is required" : "البريد الإلكتروني مطلوب";
       const clean = phone.replace(/\s/g, "");
       if (!clean) errs.phone = lang === "en" ? "Phone is required" : "رقم الهاتف مطلوب";
       else if (!EG_PHONE.test(clean)) errs.phone = lang === "en" ? "Enter a valid Egyptian phone number" : "أدخل رقم مصري صحيح";
@@ -115,7 +115,7 @@ export default function ContactSection({ lang, orderProject }: Props) {
       msgParts.push(`${lang === 'en' ? 'Phone' : 'الهاتف'}: ${phone}`);
 
       await ticketsApi.create({
-        name, email: preferredContact === 'email' ? email : '', phone,
+        name, email: preferredContact === 'email' ? email : `${phone}@whatsapp.contact`, phone,
         subject: `Order from ${name}${orderProject ? ` - ${orderProject.title}` : ''}`,
         message: msgParts.join('\n'),
         preferredContact,
@@ -472,9 +472,12 @@ export default function ContactSection({ lang, orderProject }: Props) {
                         <div>
                           <label className="block text-xs tracking-[0.15em] uppercase text-ivory/30 mb-2">{t.email}</label>
                           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-ivory/5 border border-ivory/10 px-4 py-3 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 focus:border-gold/50"
+                            className={`w-full bg-ivory/5 border px-4 py-3 text-ivory text-sm outline-none transition-colors placeholder:text-ivory/20 ${
+                              errors.email ? "border-red-400/50" : "border-ivory/10 focus:border-gold/50"
+                            }`}
                             placeholder={lang === "en" ? "your@email.com" : "بريدك الإلكتروني"}
                           />
+                          {errors.email && <p className="text-[10px] text-red-400/70 mt-1">{errors.email}</p>}
                         </div>
                       )}
 
