@@ -15,6 +15,7 @@ const AdminProjectForm = lazy(() => import('./pages/admin/AdminProjectForm'))
 const AdminTestimonials = lazy(() => import('./pages/admin/AdminTestimonials'))
 const AdminTickets = lazy(() => import('./pages/admin/AdminTickets'))
 const AdminMedia = lazy(() => import('./pages/admin/AdminMedia'))
+const AdminWhatsApp = lazy(() => import('./pages/admin/AdminWhatsApp'))
 const AdminLayout = lazy(() => import('./layout/AdminLayout'))
 
 const Loader = () => (
@@ -50,6 +51,7 @@ function AnimatedRoutes() {
               <Route path="testimonials" element={<AdminTestimonials />} />
               <Route path="tickets" element={<AdminTickets />} />
               <Route path="media" element={<AdminMedia />} />
+<Route path="whatsapp" element={<AdminWhatsApp />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

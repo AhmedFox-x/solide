@@ -3,7 +3,7 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { authApi } from '../lib/api'
 import {
   LayoutDashboard, FolderKanban, MessageSquare, Ticket,
-  Image, LogOut, Menu, X, ChevronLeft,
+  Image, Smartphone, LogOut, Menu, X, ChevronLeft,
 } from 'lucide-react'
 
 const LINKS = [
@@ -12,6 +12,7 @@ const LINKS = [
   { to: '/admin/testimonials', label: 'Testimonials', icon: MessageSquare },
   { to: '/admin/tickets', label: 'Tickets', icon: Ticket },
   { to: '/admin/media', label: 'Media', icon: Image },
+  { to: '/admin/whatsapp', label: 'WhatsApp', icon: Smartphone },
 ]
 
 export default function AdminLayout() {
