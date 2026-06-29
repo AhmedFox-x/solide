@@ -3,19 +3,19 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 let sock: any = null;
 let connected = false;
-let currentQr: string | null = null;
 
-async function getPrismaSession() {
-  let session = await prisma.whatsAppSession.findFirst({ orderBy: { createdAt: "desc" } });
-  if (!session) {
-    session = await prisma.whatsAppSession.create({ data: { id: "primary" } });
-  }
-  return session;
+function emitError(msg: string) {
+  console.error("Baileys error:", msg);
+  prisma.whatsAppSession.upsert({
+    where: { id: "primary" },
+    update: { status: "error", qrCode: msg },
+    create: { id: "primary", status: "error", qrCode: msg },
+  }).catch(() => {});
 }
 
 export async function startBaileys(): Promise<void> {
   try {
-    const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = await import("@whiskeysockets/baileys");
+    const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion } = await import("@whiskeysockets/baileys");
     const { toBuffer } = await import("qrcode");
     const path = await import("path");
     const fs = await import("fs");
@@ -27,11 +27,14 @@ export async function startBaileys(): Promise<void> {
 
     const { state, saveCreds } = await useMultiFileAuthState(authDir);
 
+    const { version } = await fetchLatestBaileysVersion();
+    console.log("Baileys using version:", version);
+
     sock = makeWASocket({
-      printQRInTerminal: false,
+      printQRInTerminal: true,
       auth: state,
-      logger: { level: "silent" } as any,
-      emitOwnEvents: false,
+      version,
+      syncFullHistory: false,
     });
 
     sock.ev.on("creds.update", saveCreds);
@@ -40,59 +43,52 @@ export async function startBaileys(): Promise<void> {
       const { connection, lastDisconnect, qr } = update;
 
       if (qr) {
-        currentQr = qr;
         try {
           const qrBuffer = await toBuffer(qr);
           const qrB64 = qrBuffer.toString("base64");
-          console.log("");
-          console.log("═══════════════════════════════════════════════");
-          console.log("  📱 WhatsApp QR code generated!");
-          console.log("  Open WhatsApp → Linked Devices → Link a Device");
-          console.log("  Scan the QR below:");
-          console.log("");
-          console.log(qr);
-          console.log("");
-          console.log("  Or view QR as base64 image via:");
-          console.log("  GET /api/whatsapp/qr");
-          console.log("═══════════════════════════════════════════════");
-          console.log("");
+          console.log("WhatsApp QR generated, save to DB");
           await prisma.whatsAppSession.upsert({
             where: { id: "primary" },
             update: { qrCode: qrB64, status: "awaiting_scan" },
             create: { id: "primary", qrCode: qrB64, status: "awaiting_scan" },
           });
-        } catch {}
+        } catch (e: any) {
+          emitError("QR save failed: " + e.message);
+        }
         return;
       }
 
       if (connection === "open") {
         connected = true;
-        currentQr = null;
         const phone = sock?.user?.id?.split(":")[0] || null;
         await prisma.whatsAppSession.upsert({
           where: { id: "primary" },
           update: { status: "connected", qrCode: null, phoneNumber: phone },
           create: { id: "primary", status: "connected", phoneNumber: phone },
         });
-        console.log(`✅ WhatsApp connected${phone ? ` (${phone})` : ""}`);
+        console.log("WhatsApp connected" + (phone ? " (" + phone + ")" : ""));
       }
 
       if (connection === "close") {
         connected = false;
-        const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
+        const isLoggedOut = lastDisconnect?.error?.output?.statusCode === DisconnectReason.loggedOut;
         await prisma.whatsAppSession.upsert({
           where: { id: "primary" },
           update: { status: "disconnected", qrCode: null },
           create: { id: "primary", status: "disconnected" },
         });
-        console.log("WhatsApp disconnected" + (shouldReconnect ? ", reconnecting..." : ""));
-        if (shouldReconnect) {
+        console.log("WhatsApp disconnected" + (isLoggedOut ? " (logged out)" : ", reconnecting..."));
+        if (!isLoggedOut) {
           setTimeout(() => startBaileys(), 5000);
         }
       }
     });
+
+    sock.ev.on("messaging-history.set", () => {});
   } catch (err: any) {
-    console.log("Baileys init skipped:", err.message);
+    emitError(err.message || "Unknown init error");
+    console.error("Baileys init error:", err);
+    setTimeout(() => startBaileys(), 10000);
   }
 }
 
@@ -118,6 +114,7 @@ export async function getWhatsAppStatus() {
     connected,
     qrCode: session?.qrCode ?? null,
     phoneNumber: session?.phoneNumber ?? null,
+    status: session?.status ?? "disconnected",
   };
 }
 

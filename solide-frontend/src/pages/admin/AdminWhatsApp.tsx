@@ -5,6 +5,7 @@ import { Smartphone, RefreshCw, CheckCircle, XCircle, Clock, Loader } from 'luci
 interface WhatsAppStatus {
   connected: boolean
   qrCode: string | null
+  status: string
 }
 
 export default function AdminWhatsApp() {
