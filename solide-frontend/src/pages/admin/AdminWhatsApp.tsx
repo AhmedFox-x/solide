@@ -25,7 +25,11 @@ export default function AdminWhatsApp() {
     }
   }, [])
 
-  useEffect(() => { fetchStatus() }, [fetchStatus])
+  useEffect(() => {
+    fetchStatus()
+    const interval = setInterval(fetchStatus, 5000)
+    return () => clearInterval(interval)
+  }, [fetchStatus])
 
   const connected = status?.connected ?? false
 
