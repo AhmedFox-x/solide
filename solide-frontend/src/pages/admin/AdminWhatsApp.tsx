@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { api } from '../../lib/api'
-import { Smartphone, RefreshCw, CheckCircle, XCircle, Clock, Loader } from 'lucide-react'
+import { Smartphone, RefreshCw, CheckCircle, Clock, Loader } from 'lucide-react'
 
 interface WhatsAppStatus {
   connected: boolean
